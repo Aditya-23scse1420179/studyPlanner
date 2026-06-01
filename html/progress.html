@@ -153,6 +153,14 @@
   </style>
 </head>
 <body>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('cogniflow_theme') || 'light';
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      }
+    })();
+  </script>
 
   <!-- Mobile Navigation Overlay -->
   <div class="menu-overlay" id="menu-overlay"></div>
@@ -240,6 +248,10 @@
           <div class="topbar-title">Progress Tracker</div>
         </div>
         <div class="topbar-right">
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle" class="toggle-sidebar-btn" title="Toggle Theme" style="margin-right: 4px;">
+            <i class="fas fa-moon"></i>
+          </button>
           <div class="topbar-streak" id="header-streak-badge">
             <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
           </div>
@@ -252,8 +264,15 @@
 
       <!-- Content Area -->
       <div class="page-container fade-in">
-        <h1 style="margin-bottom: 8px;">Academic Analytics</h1>
-        <p class="page-subtitle">Track your adaptive study goals and assessment milestones in real-time.</p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <h1 style="margin-bottom: 4px;">Academic Analytics</h1>
+            <p class="page-subtitle" style="margin-bottom: 0;">Track your adaptive study goals and assessment milestones in real-time.</p>
+          </div>
+          <button id="download-report-btn" class="btn btn-primary" style="font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fas fa-download"></i> Download Report
+          </button>
+        </div>
 
         <!-- CODECHEF STYLE STATS CARDS -->
         <div class="prog-grid">

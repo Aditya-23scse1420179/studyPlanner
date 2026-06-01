@@ -59,6 +59,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // 5. Populate User Interface Session Stats
   populateUserSessionData();
 
+  // 5.5. Initialize and Persist Theme Toggle State (Dark Mode)
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  if (themeToggleBtn) {
+    const themeIcon = themeToggleBtn.querySelector('i');
+    
+    // Sync current UI state
+    const syncThemeUI = () => {
+      const isDark = document.body.classList.contains('dark-theme');
+      if (themeIcon) {
+        themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+      }
+    };
+    
+    syncThemeUI();
+
+    themeToggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      const isDarkNow = document.body.classList.contains('dark-theme');
+      localStorage.setItem('cogniflow_theme', isDarkNow ? 'dark' : 'light');
+      syncThemeUI();
+    });
+  }
+
   // 6. Bind Logout Button Click Event
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn && typeof AuthService !== 'undefined') {

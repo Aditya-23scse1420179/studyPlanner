@@ -136,6 +136,14 @@
   </style>
 </head>
 <body>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('cogniflow_theme') || 'light';
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      }
+    })();
+  </script>
 
   <!-- Landing Header -->
   <header class="landing-header">
@@ -144,6 +152,10 @@
       <span>CogniFlow AI</span>
     </div>
     <div class="landing-nav">
+      <!-- Theme Toggle Button -->
+      <button id="theme-toggle" class="btn btn-secondary" title="Toggle Theme" style="padding: 8px 12px; margin-right: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px;">
+        <i class="fas fa-moon"></i>
+      </button>
       <a href="login.html" class="btn btn-secondary" style="font-weight: 600;" id="nav-cta-btn">Sign In</a>
     </div>
   </header>
@@ -232,6 +244,25 @@
           heroCtaStart.textContent = 'Go to Dashboard';
           heroCtaStart.href = 'dashboard.html';
         }
+      }
+
+      // Theme Toggle Initialization
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      if (themeToggleBtn) {
+        const themeIcon = themeToggleBtn.querySelector('i');
+        const syncThemeUI = () => {
+          const isDark = document.body.classList.contains('dark-theme');
+          if (themeIcon) {
+            themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+          }
+        };
+        syncThemeUI();
+        themeToggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('dark-theme');
+          const isDarkNow = document.body.classList.contains('dark-theme');
+          localStorage.setItem('cogniflow_theme', isDarkNow ? 'dark' : 'light');
+          syncThemeUI();
+        });
       }
     });
   </script>

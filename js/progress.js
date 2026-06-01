@@ -19,6 +19,12 @@ class ProgressController {
 
     // 2. Render all statistics
     this.renderStats();
+
+    // 3. Bind download button click event
+    const downloadBtn = document.getElementById('download-report-btn');
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', () => this.downloadReport());
+    }
   }
 
   renderStats() {
@@ -110,6 +116,66 @@ class ProgressController {
       setTimeout(() => {
         completionCircle.style.strokeDashoffset = offset;
       }, 200);
+    }
+  }
+
+  downloadReport() {
+    const user = this.sessionUser;
+    if (!user) return;
+
+    let accuracyPct = 0;
+    if (user.score !== null && user.score !== undefined) {
+      accuracyPct = user.score * 10;
+    } else if (user.streak > 0) {
+      accuracyPct = 60;
+    }
+    const completionPct = Math.min(100, (user.modules || 0) * 8 || 0);
+
+    const reportContent = `==================================================
+        COGNIFLOW AI - ADAPTIVE STUDY PLANNER REPORT
+==================================================
+Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
+Student Name: ${user.name}
+Email: ${user.email}
+Account Joined: ${user.joined || 'N/A'}
+
+--------------------------------------------------
+ACADEMIC ANALYTICS & METRICS
+--------------------------------------------------
+Current Learning Skill : ${user.skill || 'None selected'}
+Assessment Score       : ${user.score !== null && user.score !== undefined ? `${user.score} / 10` : 'N/A'}
+Evaluation Level       : ${user.level || 'Beginner'}
+
+Study Streak           : ${user.streak || 0} Days
+Total Study Hours      : ${user.hours || 0} Hours
+Syllabus Modules Done  : ${user.modules || 0} Modules
+
+Quiz Performance       : ${accuracyPct}% Average Accuracy
+Course Syllabus Done   : ${completionPct}% Syllabus Completed
+
+--------------------------------------------------
+GOALS & CONSISTENCY PROGRESS
+--------------------------------------------------
+Daily Streak Goal (30 Days)   : [${'#'.repeat(Math.round(Math.min(100, ((user.streak || 0)/30)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.streak || 0)/30)*100)/5))}] ${Math.min(100, Math.round(((user.streak || 0)/30)*100))}%
+Study Hours Goal (100 Hours)   : [${'#'.repeat(Math.round(Math.min(100, ((user.hours || 0)/100)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.hours || 0)/100)*100)/5))}] ${Math.min(100, Math.round(((user.hours || 0)/100)*100))}%
+Syllabus Modules Goal (12 Modules): [${'#'.repeat(Math.round(Math.min(100, ((user.modules || 0)/12)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.modules || 0)/12)*100)/5))}] ${Math.min(100, Math.round(((user.modules || 0)/12)*100))}%
+
+Keep studying and tracking your goals with CogniFlow AI!
+==================================================`;
+
+    try {
+      const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CogniFlow_Progress_Report_${user.name.replace(/\s+/g, '_')}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Export report failed", err);
+      alert("Failed to export progress report.");
     }
   }
 }

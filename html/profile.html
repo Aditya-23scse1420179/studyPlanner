@@ -11,6 +11,14 @@
   <link rel="stylesheet" href="../css/profile.css">
 </head>
 <body>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('cogniflow_theme') || 'light';
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      }
+    })();
+  </script>
 
   <!-- Mobile Overlay -->
   <div class="menu-overlay" id="menu-overlay"></div>
@@ -98,6 +106,10 @@
           <div class="topbar-title">Student Profile</div>
         </div>
         <div class="topbar-right">
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle" class="toggle-sidebar-btn" title="Toggle Theme" style="margin-right: 4px;">
+            <i class="fas fa-moon"></i>
+          </button>
           <div class="topbar-streak" id="header-streak-badge">
             <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
           </div>
