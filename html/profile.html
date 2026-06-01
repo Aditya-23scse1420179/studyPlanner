@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Student Profile</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+
+  <!-- Mobile Overlay -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div id="app-container">
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-brain"></i>
+          <span class="logo-text">CogniFlow AI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" id="nav-dashboard">
+            <a href="dashboard.html">
+              <i class="fas fa-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-profile">
+            <a href="profile.html">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-learn">
+            <a href="learn-ai.html">
+              <i class="fas fa-robot"></i>
+              <span>Learn With AI</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-progress">
+            <a href="progress.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Progress Tracker</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-reminders">
+            <a href="reminders.html">
+              <i class="fas fa-bell"></i>
+              <span>Reminders</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-community">
+            <a href="community.html">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar-letter">S</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebar-username">Student Name</span>
+          <span class="profile-role" id="sidebar-userskill">Learning DSA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT CONTENT COLUMN -->
+    <main id="main-content">
+      
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+        <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+        </span>
+        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
+          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        </div>
+      </div>
+
+      <!-- Desktop Topbar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="toggle-sidebar-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Student Profile</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-streak" id="header-streak-badge">
+            <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
+          </div>
+          <div class="topbar-user">
+            <span id="header-username">Student</span>
+            <button class="btn btn-secondary" id="logout-btn" style="padding: 4px 8px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="page-container fade-in">
+        <div class="profile-layout">
+
+          <!-- 1. PROFILE OVERVIEW HEADER CARD -->
+          <div class="profile-card-header">
+            <div class="profile-avatar-large" id="profile-avatar-char">S</div>
+            <div class="profile-meta-details">
+              <h2 id="profile-display-name">Student Name</h2>
+              <span class="profile-email-label" id="profile-display-email">name@email.com</span>
+              <span class="profile-date-joined">
+                <i class="far fa-calendar-alt"></i> Joined on <span id="profile-display-joined">June 2026</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 2. DIAGNOSTIC PERFORMANCE STATS GRID -->
+          <div class="profile-stats-grid">
+            
+            <!-- Streak -->
+            <div class="profile-stat-box">
+              <h4>Current Streak</h4>
+              <span class="stat-val-bold" id="profile-stat-streak">0 Days</span>
+            </div>
+
+            <!-- Quiz Score -->
+            <div class="profile-stat-box">
+              <h4>Last Assessment Score</h4>
+              <span class="stat-val-bold" id="profile-stat-score">N/A</span>
+            </div>
+
+            <!-- Category Grade Badge -->
+            <div class="profile-stat-box">
+              <h4>Skill Proficiency Level</h4>
+              <span class="stat-val-bold" id="profile-stat-level" style="color: var(--accent-blue);">Beginner</span>
+            </div>
+
+          </div>
+
+          <!-- 3. EDITABLE SETTINGS FORM CARD -->
+          <div class="profile-edit-card">
+            <h3><i class="fas fa-user-edit"></i> Edit Profile Information</h3>
+            
+            <div class="status-toast-alert alert alert-success" id="profile-status-alert">
+              <i class="fas fa-check-circle"></i> Profile settings updated successfully!
+            </div>
+
+            <form id="profile-edit-form">
+              <div class="form-group">
+                <label for="edit-name">Full Name</label>
+                <input type="text" id="edit-name" class="form-control" placeholder="Your Name" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-email">Email Address (Primary Account)</label>
+                  <input type="email" id="edit-email" class="form-control" placeholder="name@email.com" readonly style="background-color: var(--bg-secondary); cursor: not-allowed;">
+                </div>
+
+                <div class="form-group">
+                  <label for="edit-skill">Current Target Skill</label>
+                  <input type="text" id="edit-skill" class="form-control" placeholder="e.g. Data Structures & Algorithms">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="padding: 10px 24px; font-weight: 600;">
+                <i class="fas fa-save"></i> Save Changes
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-container">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">
+                <i class="fas fa-brain"></i>
+                <h3>CogniFlow AI</h3>
+              </div>
+              <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+            </div>
+            <div class="footer-dev">
+              <h4>Developed By</h4>
+              <p>Aditya Pratap Singh & Akshat</p>
+            </div>
+            <div class="footer-links">
+              <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+              <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>Profile Editor & Analytics Section</p>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- Script Modules -->
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (!user) return;
+
+      // 1. Synchronize Mobile Streak
+      const mobStreak = document.getElementById('mobile-streak-val');
+      if (mobStreak) mobStreak.textContent = user.streak || 0;
+
+      // 2. Populate Static Profile Details
+      const avatarChar = document.getElementById('profile-avatar-char');
+      const dispName = document.getElementById('profile-display-name');
+      const dispEmail = document.getElementById('profile-display-email');
+      const dispJoined = document.getElementById('profile-display-joined');
+      
+      const statStreak = document.getElementById('profile-stat-streak');
+      const statScore = document.getElementById('profile-stat-score');
+      const statLevel = document.getElementById('profile-stat-level');
+
+      if (avatarChar && user.name) avatarChar.textContent = user.name.trim().charAt(0).toUpperCase();
+      if (dispName) dispName.textContent = user.name;
+      if (dispEmail) dispEmail.textContent = user.email;
+      if (dispJoined) dispJoined.textContent = user.joined || new Date().toLocaleDateString();
+      
+      if (statStreak) statStreak.textContent = `${user.streak || 0} Days`;
+      if (statScore) {
+        statScore.textContent = user.score !== null && user.score !== undefined ? `${user.score} / 10` : 'N/A';
+      }
+      if (statLevel) {
+        statLevel.textContent = user.level || 'Beginner';
+        if (user.level === 'Advanced') {
+          statLevel.style.color = 'var(--color-success)';
+        } else if (user.level === 'Intermediate') {
+          statLevel.style.color = 'var(--color-warning)';
+        } else {
+          statLevel.style.color = 'var(--color-danger)';
+        }
+      }
+
+      // 3. Pre-fill Form Fields
+      const editName = document.getElementById('edit-name');
+      const editEmail = document.getElementById('edit-email');
+      const editSkill = document.getElementById('edit-skill');
+
+      if (editName) editName.value = user.name;
+      if (editEmail) editEmail.value = user.email;
+      if (editSkill) editSkill.value = user.skill !== 'None selected' ? user.skill : '';
+
+      // 4. Save form changes
+      const editForm = document.getElementById('profile-edit-form');
+      const statusAlert = document.getElementById('profile-status-alert');
+
+      if (editForm) {
+        editForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          
+          user.name = editName.value.trim();
+          user.skill = editSkill.value.trim() || 'None selected';
+          
+          // Save and Sync
+          AuthService.syncSession(user);
+
+          // Update header and card displays
+          if (avatarChar && user.name) avatarChar.textContent = user.name.trim().charAt(0).toUpperCase();
+          if (dispName) dispName.textContent = user.name;
+          
+          // Global sidebar / topbar sync
+          if (typeof populateUserSessionData === 'function') {
+            populateUserSessionData();
+          }
+
+          // Show Toast Success
+          if (statusAlert) {
+            statusAlert.classList.add('show');
+            setTimeout(() => {
+              statusAlert.classList.remove('show');
+            }, 3000);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

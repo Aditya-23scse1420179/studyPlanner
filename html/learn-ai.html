@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Learn With AI</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/learn-ai.css">
+</head>
+<body>
+
+  <!-- Menu Overlay for Mobile -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div id="app-container">
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-brain"></i>
+          <span class="logo-text">CogniFlow AI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" id="nav-dashboard">
+            <a href="dashboard.html">
+              <i class="fas fa-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-profile">
+            <a href="profile.html">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-learn">
+            <a href="learn-ai.html">
+              <i class="fas fa-robot"></i>
+              <span>Learn With AI</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-progress">
+            <a href="progress.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Progress Tracker</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-reminders">
+            <a href="reminders.html">
+              <i class="fas fa-bell"></i>
+              <span>Reminders</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-community">
+            <a href="community.html">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar-letter">S</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebar-username">Student Name</span>
+          <span class="profile-role" id="sidebar-userskill">Learning DSA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN RIGHT CONTENT PANEL -->
+    <main id="main-content">
+      
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+        <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+        </span>
+        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
+          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        </div>
+      </div>
+
+      <!-- Desktop Topbar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="toggle-sidebar-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Learn With AI</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-streak" id="header-streak-badge">
+            <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
+          </div>
+          <div class="topbar-user">
+            <span id="header-username">Student</span>
+            <button class="btn btn-secondary" id="logout-btn" style="padding: 4px 8px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Container -->
+      <div class="page-container fade-in">
+        <div class="learn-container">
+
+          <!-- 1. GOALS & CONFIGURATION FORM CARD -->
+          <div class="learn-form-card" id="learn-form-card">
+            <h2><i class="fas fa-sliders-h"></i> Configure Learning Goal</h2>
+            <p class="page-subtitle" style="margin-bottom: 24px;">
+              Input the skill you want to learn. Our adaptive engine will generate a 10-question MCQ diagnosis to determine your baseline proficiency level.
+            </p>
+
+            <div class="form-group">
+              <label for="skill-input">Skill To Learn</label>
+              <input type="text" id="skill-input" class="form-control" placeholder="e.g. DSA, HTML, CSS, JavaScript, SQL, Machine Learning" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="time-select">Time Constraint</label>
+                <select id="time-select" class="form-control" style="height: 38px;">
+                  <option value="30">30 Days Plan</option>
+                  <option value="60" selected>60 Days Plan</option>
+                  <option value="90">90 Days Plan</option>
+                  <option value="120">120 Days Plan</option>
+                  <option value="180">180 Days Plan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="hours-select">Available Hours Per Day</label>
+                <select id="hours-select" class="form-control" style="height: 38px;">
+                  <option value="1">1 Hour per day</option>
+                  <option value="2" selected>2 Hours per day</option>
+                  <option value="3">3 Hours per day</option>
+                  <option value="4">4 Hours per day</option>
+                  <option value="6">6 Hours per day</option>
+                  <option value="8">8 Hours per day</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-large" id="generate-assessment-btn">
+              <i class="fas fa-clipboard-list"></i> Generate Assessment
+            </button>
+          </div>
+
+          <!-- 2. MCQ ASSESSMENT INTERACTIVE CONTAINER -->
+          <div class="quiz-card hidden" id="quiz-card" style="display: none;">
+            <div class="quiz-header">
+              <span class="quiz-title" id="quiz-title">Skill Evaluation</span>
+              <span class="quiz-progress-text" id="quiz-progress-text">Question 1 of 10</span>
+            </div>
+            
+            <div class="quiz-progress-container">
+              <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+            </div>
+
+            <div class="question-text" id="question-text">
+              Loading question description...
+            </div>
+
+            <div class="options-list" id="options-list">
+              <!-- Dynamically populated MCQ Option Items -->
+            </div>
+
+            <button class="btn btn-primary" id="quiz-action-btn" style="padding: 10px 24px; font-weight: 600;">
+              Next Question <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- 3. ASSESSMENT RESULTS & STUDY PATH VIEW -->
+          <div class="results-card hidden" id="results-card" style="display: none;">
+            <div class="results-icon"><i class="fas fa-award"></i></div>
+            <h2>Assessment Diagnostic Completed!</h2>
+            
+            <div class="results-score-details">
+              You scored: <span id="results-score-val" style="color: var(--accent-blue);">0 / 10</span> on <span id="results-skill-name">Skill</span>
+            </div>
+
+            <div class="results-badge-container">
+              <span class="level-badge-large badge" id="results-level-badge">Beginner</span>
+            </div>
+
+            <p class="results-text-desc">
+              Your baseline level has been registered. Below is your structured goal-based study syllabus and recommended YouTube lectures.
+            </p>
+
+            <!-- MANDATORY FUTURE AI GENERATED ROADMAP PLACEHOLDER -->
+            <div class="roadmap-placeholder">
+              <i class="fas fa-route"></i>
+              <div>
+                <h4>Future AI Generated Roadmap Will Appear Here</h4>
+                <p>
+                  Our upcoming custom adaptive AI model and Meta HyperAgent recommendation engine will automatically map out comprehensive chapter roadmaps based on your active scores.
+                </p>
+              </div>
+            </div>
+
+            <!-- RECOMMENDED VIDEO COURSES GRID -->
+            <section class="resources-section">
+              <h3><i class="fab fa-youtube"></i> Recommended Video Syllabus</h3>
+              <div class="youtube-grid">
+                
+                <!-- Course 1 -->
+                <div class="youtube-card">
+                  <div class="video-thumbnail-box">
+                    <i class="fab fa-youtube"></i>
+                    <span class="video-duration-badge">12:30:00</span>
+                  </div>
+                  <div class="video-info-content">
+                    <h4>Striver's A2Z DSA Master Course</h4>
+                    <span class="video-channel">take U forward</span>
+                    <a href="https://www.youtube.com/@takeUforward" target="_blank" class="btn btn-secondary watch-btn-action">
+                      <i class="fab fa-youtube"></i> Watch Now
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Course 2 -->
+                <div class="youtube-card">
+                  <div class="video-thumbnail-box">
+                    <i class="fab fa-youtube"></i>
+                    <span class="video-duration-badge">08:45:00</span>
+                  </div>
+                  <div class="video-info-content">
+                    <h4>Supreme DSA Placement Bootcamp</h4>
+                    <span class="video-channel">CodeHelp - by Babbar</span>
+                    <a href="https://www.youtube.com/@CodeHelp" target="_blank" class="btn btn-secondary watch-btn-action">
+                      <i class="fab fa-youtube"></i> Watch Now
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Course 3 -->
+                <div class="youtube-card">
+                  <div class="video-thumbnail-box">
+                    <i class="fab fa-youtube"></i>
+                    <span class="video-duration-badge">06:20:00</span>
+                  </div>
+                  <div class="video-info-content">
+                    <h4>Complete DSA Coding Bootcamp</h4>
+                    <span class="video-channel">Apna College</span>
+                    <a href="https://www.youtube.com/@ApnaCollegeOfficial" target="_blank" class="btn btn-secondary watch-btn-action">
+                      <i class="fab fa-youtube"></i> Watch Now
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Course 4 -->
+                <div class="youtube-card">
+                  <div class="video-thumbnail-box">
+                    <i class="fab fa-youtube"></i>
+                    <span class="video-duration-badge">10:15:00</span>
+                  </div>
+                  <div class="video-info-content">
+                    <h4>Full Stack Web Development Playlist</h4>
+                    <span class="video-channel">freeCodeCamp</span>
+                    <a href="https://www.youtube.com/@freecodecamp" target="_blank" class="btn btn-secondary watch-btn-action">
+                      <i class="fab fa-youtube"></i> Watch Now
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Course 5 -->
+                <div class="youtube-card">
+                  <div class="video-thumbnail-box">
+                    <i class="fab fa-youtube"></i>
+                    <span class="video-duration-badge">04:30:00</span>
+                  </div>
+                  <div class="video-info-content">
+                    <h4>Modern JavaScript Master Course</h4>
+                    <span class="video-channel">Traversy Media</span>
+                    <a href="https://www.youtube.com/@traversymedia" target="_blank" class="btn btn-secondary watch-btn-action">
+                      <i class="fab fa-youtube"></i> Watch Now
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-container">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">
+                <i class="fas fa-brain"></i>
+                <h3>CogniFlow AI</h3>
+              </div>
+              <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+            </div>
+            <div class="footer-dev">
+              <h4>Developed By</h4>
+              <p>Aditya Pratap Singh & Akshat</p>
+            </div>
+            <div class="footer-links">
+              <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+              <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>Assessment System & Study Dashboard MVP</p>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/learn-ai.js"></script>
+  <script>
+    // Sync mobile header streak
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        const mobStreak = document.getElementById('mobile-streak-val');
+        if (mobStreak) mobStreak.textContent = user.streak || 0;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,584 @@
+/**
+ * LearnAIController: Handles Goal Settings, 10-Question MCQ quiz,
+ * grading levels, and syncing performance stats with Local Storage.
+ */
+
+// Question Database (10 questions per skill)
+const QUESTION_BANK = {
+  "dsa": [
+    {
+      q: "What is the worst-case time complexity of searching in a balanced Binary Search Tree (BST)?",
+      o: ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+      a: 2
+    },
+    {
+      q: "Which data structure operates on a First-In-First-Out (FIFO) basis?",
+      o: ["Stack", "Queue", "Binary Tree", "Heap"],
+      a: 1
+    },
+    {
+      q: "What is the worst-case time complexity of the Quick Sort algorithm?",
+      o: ["O(n log n)", "O(n^2)", "O(n)", "O(2^n)"],
+      a: 1
+    },
+    {
+      q: "Which data structure is typically used to implement Depth First Search (DFS) on a graph?",
+      o: ["Stack", "Queue", "Hash Table", "Priority Queue"],
+      a: 0
+    },
+    {
+      q: "What is the best-case time complexity of Bubble Sort when the array is already sorted?",
+      o: ["O(n)", "O(log n)", "O(n log n)", "O(n^2)"],
+      a: 0
+    },
+    {
+      q: "In a singly linked list, what is the time complexity to insert a new node at the very beginning (head)?",
+      o: ["O(n)", "O(log n)", "O(1)", "O(n log n)"],
+      a: 2
+    },
+    {
+      q: "Which of the following is classified as a non-linear data structure?",
+      o: ["Array", "Linked List", "Stack", "Graph"],
+      a: 3
+    },
+    {
+      q: "Which data structure is implicitly used by the system during recursive function calls?",
+      o: ["Queue", "Stack", "Linked List", "Binary Tree"],
+      a: 1
+    },
+    {
+      q: "What is the worst-case time complexity to heapify an element in a Binary Heap?",
+      o: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+      a: 1
+    },
+    {
+      q: "What is the space complexity of Breadth First Search (BFS) on a graph in the worst case?",
+      o: ["O(1)", "O(V) where V is vertices", "O(E) where E is edges", "O(V * E)"],
+      a: 1
+    }
+  ],
+  "html": [
+    {
+      q: "What does HTML stand for?",
+      o: ["Hyperlinks and Text Markup Language", "Hyper Text Markup Language", "Home Tool Markup Language", "Hyper Tech Modern Language"],
+      a: 1
+    },
+    {
+      q: "Which element is the correct HTML tag for the largest heading?",
+      o: ["<heading>", "<h6>", "<head>", "<h1>"],
+      a: 3
+    },
+    {
+      q: "What is the correct HTML element for producing a single line break?",
+      o: ["<break>", "<lb>", "<br>", "<line>"],
+      a: 2
+    },
+    {
+      q: "Which HTML attribute is used to define the file path for an image?",
+      o: ["href", "src", "link", "alt"],
+      a: 1
+    },
+    {
+      q: "Which tag is used to create an unordered bulleted list?",
+      o: ["<ul>", "<ol>", "<li>", "<list>"],
+      a: 0
+    },
+    {
+      q: "Which HTML5 element represents independent, self-contained article content?",
+      o: ["<section>", "<div>", "<article>", "<aside>"],
+      a: 2
+    },
+    {
+      q: "What is the correct HTML code for creating a hyperlink?",
+      o: ["<a>http://google.com</a>", "<a href='http://google.com'>Google</a>", "<a url='http://google.com'>Google</a>", "<a>href='http://google.com'</a>"],
+      a: 1
+    },
+    {
+      q: "Which character is used to indicate an end tag in HTML?",
+      o: ["^", "<", "*", "/"],
+      a: 3
+    },
+    {
+      q: "How can you create a numbered ordered list?",
+      o: ["<ol>", "<ul>", "<dl>", "<list>"],
+      a: 0
+    },
+    {
+      q: "Which input type attribute creates a slider controller in HTML5?",
+      o: ["slider", "number", "range", "scroll"],
+      a: 2
+    }
+  ],
+  "css": [
+    {
+      q: "What does CSS stand for?",
+      o: ["Creative Style Sheets", "Computer Style Sheets", "Cascading Style Sheets", "Colorful Style Sheets"],
+      a: 2
+    },
+    {
+      q: "Where in an HTML document is the correct place to link an external stylesheet?",
+      o: ["At the end of the <body>", "In the <head> section", "Directly inside the first <div>", "In the <footer> section"],
+      a: 1
+    },
+    {
+      q: "Which HTML tag is used to define embedded internal style rules?",
+      o: ["<script>", "<css>", "<style>", "<link>"],
+      a: 2
+    },
+    {
+      q: "Which CSS property is used to change the background color of an element?",
+      o: ["color", "background-color", "bgcolor", "background-style"],
+      a: 1
+    },
+    {
+      q: "How do you select a unique element with the id 'demo' in CSS?",
+      o: [".demo", "*demo", "demo", "#demo"],
+      a: 3
+    },
+    {
+      q: "How do you select all elements with the class name 'test' in CSS?",
+      o: [".test", "#test", "test", "*test"],
+      a: 0
+    },
+    {
+      q: "What is the default initial value of the position property in CSS?",
+      o: ["absolute", "relative", "static", "fixed"],
+      a: 2
+    },
+    {
+      q: "Which CSS property controls the size of text?",
+      o: ["font-style", "text-size", "font-size", "text-style"],
+      a: 2
+    },
+    {
+      q: "How do you make the font weight bold using CSS?",
+      o: ["font: bold;", "font-weight: bold;", "text-style: bold;", "font-bold: true;"],
+      a: 1
+    },
+    {
+      q: "Which CSS box-model property adds space inside an element, between content and border?",
+      o: ["margin", "padding", "border", "gap"],
+      a: 1
+    }
+  ],
+  "javascript": [
+    {
+      q: "Which HTML element is used to contain external or inline JavaScript code?",
+      o: ["<js>", "<scripting>", "<script>", "<javascript>"],
+      a: 2
+    },
+    {
+      q: "How do you write 'Hello World' in a browser popup alert box?",
+      o: ["msgBox('Hello World');", "alert('Hello World');", "alertBox('Hello World');", "msg('Hello World');"],
+      a: 1
+    },
+    {
+      q: "How do you define a function in JavaScript?",
+      o: ["function:myFunction()", "function myFunction()", "def myFunction()", "create myFunction()"],
+      a: 1
+    },
+    {
+      q: "How do you call a function named 'myFunction' in JavaScript?",
+      o: ["call myFunction()", "myFunction()", "run myFunction", "execute myFunction()"],
+      a: 1
+    },
+    {
+      q: "What is the correct syntax for writing a standard IF condition check?",
+      o: ["if i = 5 then", "if (i == 5)", "if i == 5", "if i = 5"],
+      a: 1
+    },
+    {
+      q: "How does a standard, incrementing FOR loop begin?",
+      o: ["for (i <= 5; i++)", "for (let i = 0; i < 5; i++)", "for i = 1 to 5", "for (let i = 0; i < 5)"],
+      a: 1
+    },
+    {
+      q: "What is the correct way to declare an array literal in JavaScript?",
+      o: ["const colors = (1:'red', 2:'green')", "const colors = 'red', 'green', 'blue'", "const colors = ['red', 'green', 'blue']", "const colors = 1 = ('red'), 2 = ('green')"],
+      a: 2
+    },
+    {
+      q: "Which operator is used to assign a value to a variable in JavaScript?",
+      o: ["*", "=", "==", "==="],
+      a: 1
+    },
+    {
+      q: "What is the output of evaluated expression: 'typeof null'?",
+      o: ["'null'", "'undefined'", "'object'", "'string'"],
+      a: 2
+    },
+    {
+      q: "How do you round a decimal number to the nearest integer?",
+      o: ["Math.rnd()", "Math.round()", "Math.floor()", "Math.ceil()"],
+      a: 1
+    }
+  ],
+  "sql": [
+    {
+      q: "What does SQL stand for?",
+      o: ["Strong Question Language", "Structured Query Language", "Structured Question Layout", "System Query Language"],
+      a: 1
+    },
+    {
+      q: "Which SQL statement is used to query and extract data from a database?",
+      o: ["EXTRACT", "GET", "SELECT", "OPEN"],
+      a: 2
+    },
+    {
+      q: "Which SQL statement is used to modify existing records in a database table?",
+      o: ["MODIFY", "SAVE", "UPDATE", "CHANGE"],
+      a: 2
+    },
+    {
+      q: "Which SQL statement is used to remove records from a table?",
+      o: ["REMOVE", "DELETE", "COLLAPSE", "DROP"],
+      a: 1
+    },
+    {
+      q: "Which SQL clause is used to insert new row values into a database table?",
+      o: ["ADD RECORD", "INSERT INTO", "INSERT ROW", "ADD VALUES"],
+      a: 1
+    },
+    {
+      q: "How do you select a column named 'FirstName' from a table named 'Persons'?",
+      o: ["SELECT Persons.FirstName", "SELECT FirstName FROM Persons", "EXTRACT FirstName FROM Persons", "SELECT FirstName IN Persons"],
+      a: 1
+    },
+    {
+      q: "How do you select all columns from a table named 'Persons'?",
+      o: ["SELECT [all] FROM Persons", "SELECT * FROM Persons", "SELECT ALL FROM Persons", "SELECT *.Persons"],
+      a: 1
+    },
+    {
+      q: "How do you select records where 'FirstName' is 'Peter'?",
+      o: ["SELECT * FROM Persons WHERE FirstName LIKE 'Peter'", "SELECT * FROM Persons WHERE FirstName='Peter'", "SELECT [all] FROM Persons WHERE FirstName='Peter'", "SELECT * FROM Persons WHERE FirstName IS 'Peter'"],
+      a: 1
+    },
+    {
+      q: "Which keyword is used to filter out duplicate rows and return unique values?",
+      o: ["UNIQUE", "SINGLE", "DISTINCT", "DIFFERENT"],
+      a: 2
+    },
+    {
+      q: "Which SQL keyword is used to sort the output records?",
+      o: ["SORT BY", "ORDER BY", "ALIGN BY", "GROUP BY"],
+      a: 1
+    }
+  ],
+  "machine learning": [
+    {
+      q: "What is supervised learning in Machine Learning?",
+      o: ["Learning without feedback", "Learning with labeled training data", "Learning from environment feedback rewards", "Clustering similar data items"],
+      a: 1
+    },
+    {
+      q: "Which of the following is classified as a standard regression algorithm?",
+      o: ["K-Means", "Linear Regression", "Logistic Regression", "Random Forest Classifier"],
+      a: 1
+    },
+    {
+      q: "What is the primary purpose of a validation dataset?",
+      o: ["To test final generalized accuracy", "To train model weights", "To tune hyperparameters and prevent overfitting", "To collect raw raw features"],
+      a: 2
+    },
+    {
+      q: "What is 'overfitting' in machine learning?",
+      o: ["Model generalizes well to unseen data", "Model performs well on training data but poorly on testing data", "Model performs poorly on both training and test data", "Model runs too slowly in production"],
+      a: 1
+    },
+    {
+      q: "Which metric is commonly used to evaluate classification model correctness?",
+      o: ["Mean Squared Error (MSE)", "R-squared value", "F1-Score / Accuracy", "Cosine Similarity"],
+      a: 2
+    },
+    {
+      q: "What does KNN stand for in machine learning context?",
+      o: ["Kernel Node Network", "K-Nearest Neighbors", "K-Numerical Nodes", "K-Newtonian Network"],
+      a: 1
+    },
+    {
+      q: "What is unsupervised learning?",
+      o: ["Learning from labeled inputs", "Learning structure from unlabeled inputs", "Direct programming from developers", "Playing game agents"],
+      a: 1
+    },
+    {
+      q: "What does the 'K' represent in K-Means clustering algorithm?",
+      o: ["The size of inputs", "The number of clusters to form", "The dimension space", "The iteration speed limit"],
+      a: 1
+    },
+    {
+      q: "Which activation function is most commonly used to output values bounded strictly between 0 and 1?",
+      o: ["ReLU", "Tanh", "Sigmoid", "Softmax"],
+      a: 2
+    },
+    {
+      q: "What is the main goal of regularization techniques (L1/L2) in ML?",
+      o: ["To increase training speed", "To prevent overfitting by penalizing complexity", "To clean corrupted labels", "To increase features size"],
+      a: 1
+    }
+  ]
+};
+
+class LearnAIController {
+  constructor() {
+    this.sessionUser = null;
+    this.activeSkill = "";
+    this.timeLimit = "";
+    this.dailyHours = "";
+    
+    // Quiz state
+    this.currentQuestions = [];
+    this.currentQIndex = 0;
+    this.userAnswers = [];
+    this.selectedOptionIndex = null;
+
+    this.init();
+  }
+
+  init() {
+    // 1. Fetch user session
+    if (typeof AuthService !== 'undefined') {
+      this.sessionUser = AuthService.getCurrentUser();
+    }
+    
+    if (!this.sessionUser) return;
+
+    // 2. Parse URL parameters for pre-filled skills
+    this.checkUrlParams();
+
+    // 3. Bind UI Form actions
+    const genAssessmentBtn = document.getElementById('generate-assessment-btn');
+    if (genAssessmentBtn) {
+      genAssessmentBtn.addEventListener('click', () => this.handleGenerateClick());
+    }
+  }
+
+  checkUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const searchSkill = params.get('search');
+    const skillInput = document.getElementById('skill-input');
+    
+    if (searchSkill && skillInput) {
+      skillInput.value = searchSkill;
+    }
+  }
+
+  handleGenerateClick() {
+    const skillInput = document.getElementById('skill-input');
+    const timeSelect = document.getElementById('time-select');
+    const hoursSelect = document.getElementById('hours-select');
+
+    if (!skillInput || !skillInput.value.trim()) {
+      alert("Please enter a skill to learn.");
+      return;
+    }
+
+    this.activeSkill = skillInput.value.trim();
+    this.timeLimit = timeSelect ? timeSelect.value : "60";
+    this.dailyHours = hoursSelect ? hoursSelect.value : "2";
+
+    // Load MCQ Database
+    this.loadQuizQuestions();
+  }
+
+  loadQuizQuestions() {
+    // Standardize key check
+    const normalizedKey = this.activeSkill.toLowerCase().trim();
+    
+    let dbKey = "javascript"; // Default fallback
+    if (QUESTION_BANK[normalizedKey]) {
+      dbKey = normalizedKey;
+    } else if (normalizedKey.includes("dsa") || normalizedKey.includes("data structure") || normalizedKey.includes("algorithm")) {
+      dbKey = "dsa";
+    } else if (normalizedKey.includes("html")) {
+      dbKey = "html";
+    } else if (normalizedKey.includes("css")) {
+      dbKey = "css";
+    } else if (normalizedKey.includes("js") || normalizedKey.includes("javascript")) {
+      dbKey = "javascript";
+    } else if (normalizedKey.includes("sql") || normalizedKey.includes("database")) {
+      dbKey = "sql";
+    } else if (normalizedKey.includes("machine learning") || normalizedKey.includes("ml") || normalizedKey.includes("ai")) {
+      dbKey = "machine learning";
+    }
+
+    // Shallow copy the 10 questions
+    this.currentQuestions = JSON.parse(JSON.stringify(QUESTION_BANK[dbKey]));
+    this.currentQIndex = 0;
+    this.userAnswers = [];
+    this.selectedOptionIndex = null;
+
+    // Transition forms
+    const learnForm = document.getElementById('learn-form-card');
+    const quizCard = document.getElementById('quiz-card');
+
+    if (learnForm) learnForm.style.display = 'none';
+    if (quizCard) {
+      quizCard.classList.remove('hidden');
+      quizCard.style.display = 'block';
+    }
+
+    // Render first question
+    this.renderQuestion();
+  }
+
+  renderQuestion() {
+    const qData = this.currentQuestions[this.currentQIndex];
+    
+    // Reset selected choice
+    this.selectedOptionIndex = null;
+
+    // Bind headers
+    const qTitle = document.getElementById('quiz-title');
+    const qProgressText = document.getElementById('quiz-progress-text');
+    const qProgressBar = document.getElementById('quiz-progress-fill');
+    
+    if (qTitle) qTitle.textContent = `Skill Evaluation: ${this.activeSkill}`;
+    if (qProgressText) qProgressText.textContent = `Question ${this.currentQIndex + 1} of 10`;
+    if (qProgressBar) {
+      qProgressBar.style.width = `${((this.currentQIndex) / 10) * 100}%`;
+    }
+
+    // Bind text
+    const qText = document.getElementById('question-text');
+    if (qText) qText.textContent = qData.q;
+
+    // Render Options List
+    const optionsContainer = document.getElementById('options-list');
+    if (optionsContainer) {
+      optionsContainer.innerHTML = '';
+      
+      const markers = ["A", "B", "C", "D"];
+      qData.o.forEach((optionText, idx) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option-item';
+        optionDiv.innerHTML = `
+          <div class="option-marker">${markers[idx]}</div>
+          <span>${this.escapeHTML(optionText)}</span>
+        `;
+        
+        // Click listener
+        optionDiv.addEventListener('click', () => {
+          // Deselect others
+          document.querySelectorAll('.option-item').forEach(item => {
+            item.classList.remove('selected');
+          });
+          optionDiv.classList.add('selected');
+          this.selectedOptionIndex = idx;
+          
+          // Enable action button
+          const actionBtn = document.getElementById('quiz-action-btn');
+          if (actionBtn) actionBtn.removeAttribute('disabled');
+        });
+
+        optionsContainer.appendChild(optionDiv);
+      });
+    }
+
+    // Action button setup
+    const actionBtn = document.getElementById('quiz-action-btn');
+    if (actionBtn) {
+      actionBtn.setAttribute('disabled', 'true');
+      if (this.currentQIndex === 9) {
+        actionBtn.innerHTML = `Submit Assessment <i class="fas fa-check-circle"></i>`;
+      } else {
+        actionBtn.innerHTML = `Next Question <i class="fas fa-arrow-right"></i>`;
+      }
+
+      // Re-bind click once
+      actionBtn.onclick = () => this.handleNextClick();
+    }
+  }
+
+  handleNextClick() {
+    if (this.selectedOptionIndex === null) return;
+
+    // Save answer
+    this.userAnswers.push(this.selectedOptionIndex);
+
+    if (this.currentQIndex < 9) {
+      this.currentQIndex++;
+      this.renderQuestion();
+    } else {
+      // Completed, grade and render results
+      this.gradeQuiz();
+    }
+  }
+
+  gradeQuiz() {
+    let correctCount = 0;
+    this.currentQuestions.forEach((q, idx) => {
+      if (this.userAnswers[idx] === q.a) {
+        correctCount++;
+      }
+    });
+
+    // Score categorization:
+    // 0-4 correct = Beginner
+    // 5-7 correct = Intermediate
+    // 8-10 correct = Advanced
+    let level = "Beginner";
+    let badgeClass = "badge-danger";
+    if (correctCount >= 8) {
+      level = "Advanced";
+      badgeClass = "badge-success";
+    } else if (correctCount >= 5) {
+      level = "Intermediate";
+      badgeClass = "badge-warning";
+    }
+
+    // Sync stats into Local Storage
+    const user = this.sessionUser;
+    user.skill = this.activeSkill;
+    user.score = correctCount;
+    user.level = level;
+    
+    // Simulate study increments upon successful assessment completion
+    user.streak = Math.max(1, (user.streak || 0) + 1);
+    user.hours = Math.max(2, (user.hours || 0) + 2);
+    user.modules = Math.max(1, (user.modules || 0) + 1);
+
+    if (typeof AuthService !== 'undefined') {
+      AuthService.syncSession(user);
+    }
+
+    // Render results view
+    const quizCard = document.getElementById('quiz-card');
+    const resultsCard = document.getElementById('results-card');
+
+    if (quizCard) quizCard.style.display = 'none';
+    if (resultsCard) {
+      resultsCard.classList.remove('hidden');
+      resultsCard.style.display = 'block';
+    }
+
+    // Populate Results Content
+    const scoreVal = document.getElementById('results-score-val');
+    const levelBadge = document.getElementById('results-level-badge');
+    const skillNameVal = document.getElementById('results-skill-name');
+
+    if (scoreVal) scoreVal.textContent = `${correctCount} / 10`;
+    if (skillNameVal) skillNameVal.textContent = this.activeSkill;
+    if (levelBadge) {
+      levelBadge.className = `level-badge-large badge ${badgeClass}`;
+      levelBadge.textContent = level;
+    }
+  }
+
+  escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+    );
+  }
+}
+
+// Instantiate on load
+document.addEventListener('DOMContentLoaded', () => {
+  new LearnAIController();
+});

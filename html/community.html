@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Student Community</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* Chat Layout */
+    .community-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      height: 600px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    
+    /* Left Channels Column */
+    .chat-channels-col {
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 0;
+    }
+    
+    .chat-channels-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      padding: 0 16px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    .channel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .channel-item {
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    
+    .channel-item:hover {
+      background-color: #eaeef2;
+      color: var(--text-primary);
+    }
+    
+    .channel-item.active {
+      background-color: var(--accent-blue-light);
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+    
+    /* Right Chat Messages Column */
+    .chat-messages-col {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background-color: var(--bg-primary);
+    }
+    
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .chat-header-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+    
+    .chat-header-meta {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    
+    .chat-history-container {
+      flex-grow: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    /* Individual Chat Bubble */
+    .message-bubble {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      max-width: 80%;
+    }
+    
+    .message-bubble.self {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .message-bubble.self .msg-avatar {
+      background-color: var(--accent-blue-light);
+      color: var(--accent-blue);
+    }
+    
+    .msg-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .msg-author-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 0.75rem;
+    }
+    
+    .msg-author {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .msg-time {
+      color: var(--text-muted);
+    }
+    
+    .msg-text-box {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 12px;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+    
+    .message-bubble.self .msg-text-box {
+      background-color: var(--accent-blue-light);
+      border-color: rgba(9, 105, 218, 0.15);
+      color: var(--text-primary);
+      border-radius: 12px 0 12px 12px;
+    }
+    
+    /* Bottom Input Area */
+    .chat-input-bar {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 12px;
+      background-color: var(--bg-primary);
+    }
+    
+    .chat-input-field {
+      flex-grow: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-sm);
+      font-size: 0.9rem;
+      font-family: var(--font-sans);
+    }
+    
+    .chat-input-field:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+    }
+    
+    .chat-send-btn {
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+    
+    @media (max-width: 768px) {
+      .community-layout {
+        grid-template-columns: 1fr;
+        height: 500px;
+      }
+      .chat-channels-col {
+        display: none; /* Hide channels sidebar on small mobile displays */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div id="app-container">
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-brain"></i>
+          <span class="logo-text">CogniFlow AI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" id="nav-dashboard">
+            <a href="dashboard.html">
+              <i class="fas fa-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-profile">
+            <a href="profile.html">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-learn">
+            <a href="learn-ai.html">
+              <i class="fas fa-robot"></i>
+              <span>Learn With AI</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-progress">
+            <a href="progress.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Progress Tracker</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-reminders">
+            <a href="reminders.html">
+              <i class="fas fa-bell"></i>
+              <span>Reminders</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-community">
+            <a href="community.html">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar-letter">S</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebar-username">Student Name</span>
+          <span class="profile-role" id="sidebar-userskill">Learning DSA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN PANEL -->
+    <main id="main-content">
+      
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+        <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+        </span>
+        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
+          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        </div>
+      </div>
+
+      <!-- Desktop Header -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="toggle-sidebar-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Student Community</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-streak" id="header-streak-badge">
+            <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
+          </div>
+          <div class="topbar-user">
+            <span id="header-username">Student</span>
+            <button class="btn btn-secondary" id="logout-btn" style="padding: 4px 8px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Page -->
+      <div class="page-container fade-in">
+        <h1 style="margin-bottom: 8px;">Community Channels</h1>
+        <p class="page-subtitle">Collaborate, exchange roadmaps, and chat with other study partners in real-time.</p>
+
+        <!-- CHAT CONSOLE LAYOUT -->
+        <div class="community-layout">
+          
+          <!-- Channels list (left) -->
+          <div class="chat-channels-col">
+            <span class="chat-channels-title">Channels</span>
+            <ul class="channel-list">
+              <li class="channel-item active" data-channel="general-study"><i class="fas fa-hashtag"></i> general-study</li>
+              <li class="channel-item" data-channel="dsa-practice"><i class="fas fa-hashtag"></i> dsa-practice</li>
+              <li class="channel-item" data-channel="webdev-group"><i class="fas fa-hashtag"></i> webdev-group</li>
+              <li class="channel-item" data-channel="ml-discussions"><i class="fas fa-hashtag"></i> ml-discussions</li>
+            </ul>
+          </div>
+
+          <!-- Chat messages area (right) -->
+          <div class="chat-messages-col">
+            
+            <div class="chat-header">
+              <span class="chat-header-title" id="active-channel-name"># general-study</span>
+              <span class="chat-header-meta"><i class="fas fa-users"></i> 142 members active</span>
+            </div>
+
+            <!-- Messages Stream -->
+            <div class="chat-history-container" id="chat-history">
+              
+              <!-- Msg 1 -->
+              <div class="message-bubble">
+                <div class="msg-avatar">A</div>
+                <div class="msg-details">
+                  <div class="msg-author-row">
+                    <span class="msg-author">Akshat</span>
+                    <span class="msg-time">Today at 10:45 AM</span>
+                  </div>
+                  <div class="msg-text-box">
+                    Hey everyone! Did anyone solve today's daily Heap coding question? I am stuck on the optimization step.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Msg 2 -->
+              <div class="message-bubble">
+                <div class="msg-avatar">R</div>
+                <div class="msg-details">
+                  <div class="msg-author-row">
+                    <span class="msg-author">Rahul Sharma</span>
+                    <span class="msg-time">Today at 10:46 AM</span>
+                  </div>
+                  <div class="msg-text-box">
+                    Yes! I optimized it using a Min-Heap. The complexity goes down to O(N log K). Check out the heapify implementation, it makes a huge difference.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Msg 3 -->
+              <div class="message-bubble">
+                <div class="msg-avatar">S</div>
+                <div class="msg-details">
+                  <div class="msg-author-row">
+                    <span class="msg-author">Sneha Reddy</span>
+                    <span class="msg-time">Today at 11:02 AM</span>
+                  </div>
+                  <div class="msg-text-box">
+                    I just submitted my HTML/CSS assessment diagnostic. Got Intermediate! The recommended video courses in the Learn-AI section are gold.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dynamic messages go here -->
+
+            </div>
+
+            <!-- Chat Bottom Input Bar -->
+            <div class="chat-input-bar">
+              <input type="text" id="chat-message-input" class="chat-input-field" placeholder="Type a message to the group...">
+              <button class="btn btn-primary chat-send-btn" id="chat-send-btn">
+                <i class="fas fa-paper-plane"></i> Send
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FOOTER WITH REAL LINKS -->
+      <footer>
+        <div class="footer-container">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">
+                <i class="fas fa-brain"></i>
+                <h3>CogniFlow AI</h3>
+              </div>
+              <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+            </div>
+            <div class="footer-dev">
+              <h4>Developed By</h4>
+              <p>Aditya Pratap Singh & Akshat</p>
+            </div>
+            <div class="footer-links">
+              <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+              <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>Student Community Hub</p>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        // Sync mobile streak
+        const mobStreak = document.getElementById('mobile-streak-val');
+        if (mobStreak) mobStreak.textContent = user.streak || 0;
+      }
+
+      // Handle message submission locally
+      const sendBtn = document.getElementById('chat-send-btn');
+      const msgInput = document.getElementById('chat-message-input');
+      const chatHistory = document.getElementById('chat-history');
+
+      function sendMessage() {
+        if (!msgInput || !chatHistory) return;
+        const text = msgInput.value.trim();
+        if (!text) return;
+
+        const userName = user ? user.name : "Student";
+        const initial = userName.charAt(0).toUpperCase();
+
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble self';
+        bubble.innerHTML = `
+          <div class="msg-avatar">${initial}</div>
+          <div class="msg-details">
+            <div class="msg-author-row">
+              <span class="msg-author">${userName} (You)</span>
+              <span class="msg-time">Just now</span>
+            </div>
+            <div class="msg-text-box">
+              ${escapeHTML(text)}
+            </div>
+          </div>
+        `;
+
+        chatHistory.appendChild(bubble);
+        msgInput.value = '';
+
+        // Auto scroll to bottom
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        // Auto reply simulation helper
+        setTimeout(() => {
+          simulateReply();
+        }, 1500);
+      }
+
+      function simulateReply() {
+        const replies = [
+          "Awesome! I totally agree.",
+          "Good luck on your study goal! Keep going.",
+          "Let's practice some more questions tonight.",
+          "Have you guys checked the Reminders page? It's really helpful."
+        ];
+        const randomReply = replies[Math.floor(Math.random() * replies.length)];
+        const names = ["Akshat", "Rahul Sharma", "Sneha Reddy"];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const initial = randomName.charAt(0).toUpperCase();
+
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+        bubble.innerHTML = `
+          <div class="msg-avatar">${initial}</div>
+          <div class="msg-details">
+            <div class="msg-author-row">
+              <span class="msg-author">${randomName}</span>
+              <span class="msg-time">Just now</span>
+            </div>
+            <div class="msg-text-box">
+              ${randomReply}
+            </div>
+          </div>
+        `;
+        chatHistory.appendChild(bubble);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+      }
+
+      if (sendBtn && msgInput) {
+        sendBtn.addEventListener('click', sendMessage);
+        msgInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        });
+      }
+
+      // Handle channel switching mocks
+      const channels = document.querySelectorAll('.channel-item');
+      const activeNameLabel = document.getElementById('active-channel-name');
+
+      channels.forEach(item => {
+        item.addEventListener('click', () => {
+          channels.forEach(ch => ch.classList.remove('active'));
+          item.classList.add('active');
+          const channelName = item.textContent.trim();
+          if (activeNameLabel) activeNameLabel.textContent = `# ${channelName}`;
+
+          // Clear history and add initial hello
+          if (chatHistory) {
+            chatHistory.innerHTML = `
+              <div class="message-bubble">
+                <div class="msg-avatar">C</div>
+                <div class="msg-details">
+                  <div class="msg-author-row">
+                    <span class="msg-author">CogniFlow Bot</span>
+                    <span class="msg-time">Just now</span>
+                  </div>
+                  <div class="msg-text-box">
+                    Welcome to the <strong># ${channelName}</strong> room! Feel free to ask questions and coordinate study groups.
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        });
+      });
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, tag => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag] || tag));
+      }
+    });
+  </script>
+</body>
+</html>

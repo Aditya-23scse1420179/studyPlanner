@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Adaptive Study Planner</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .landing-header {
+      height: 70px;
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .landing-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+    .landing-logo i {
+      color: var(--accent-blue);
+      font-size: 1.5rem;
+    }
+    .landing-nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .landing-hero {
+      padding: 100px 24px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .landing-hero h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .landing-hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .cta-btn-lg {
+      padding: 12px 28px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: var(--border-radius-sm);
+    }
+    .landing-features {
+      background-color: var(--bg-primary);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 80px 40px;
+    }
+    .features-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .features-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 48px;
+      letter-spacing: -0.5px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .feature-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 32px 24px;
+      transition: all 0.15s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--text-muted);
+    }
+    .feature-icon {
+      font-size: 1.75rem;
+      color: var(--accent-blue);
+      margin-bottom: 20px;
+    }
+    .feature-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    
+    @media (max-width: 768px) {
+      .landing-header {
+        padding: 0 20px;
+      }
+      .landing-hero h1 {
+        font-size: 2.2rem;
+      }
+      .landing-hero p {
+        font-size: 1.1rem;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Landing Header -->
+  <header class="landing-header">
+    <div class="landing-logo">
+      <i class="fas fa-brain"></i>
+      <span>CogniFlow AI</span>
+    </div>
+    <div class="landing-nav">
+      <a href="login.html" class="btn btn-secondary" style="font-weight: 600;" id="nav-cta-btn">Sign In</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="landing-hero fade-in">
+      <h1 class="gradient-text">Learn Smarter, Not Harder</h1>
+      <p>
+        Accelerate your learning journey with CogniFlow AI. We build adaptive, goal-oriented study schedules, track study streaks, and map precise assessment steps tailored to your level.
+      </p>
+      <div class="cta-buttons">
+        <a href="login.html" class="btn btn-primary cta-btn-lg" id="hero-cta-start"><i class="fas fa-rocket"></i> Get Started Free</a>
+        <a href="#features" class="btn btn-secondary cta-btn-lg">Learn More</a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="landing-features" id="features">
+      <div class="features-container">
+        <h2 class="features-title">Designed for Visual Learners & Engineers</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-magic"></i></div>
+            <h3>Adaptive MCQ Evaluation</h3>
+            <p>Test your knowledge in real-time. Choose a skill and run a structured 10-question evaluation to diagnose your starting difficulty automatically.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-road"></i></div>
+            <h3>Curated Learning Paths</h3>
+            <p>Access structured learning modules and roadmap resources. Leverage high-quality recommended YouTube course links to master topics systematically.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-bell"></i></div>
+            <h3>Intelligent Reminders</h3>
+            <p>Never fall behind. Set detailed topics, date timers, and checklist items that persist locally to keep you consistent with daily revisions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <i class="fas fa-brain"></i>
+            <h3>CogniFlow AI</h3>
+          </div>
+          <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+        </div>
+        <div class="footer-dev">
+          <h4>Developed By</h4>
+          <p>Aditya Pratap Singh & Akshat</p>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+          <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 CogniFlow AI. All rights reserved.</p>
+        <p>Built using SOLID vanilla OOP principles.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if user is logged in, change button text and destinations
+      if (AuthService.isAuthenticated()) {
+        const navCtaBtn = document.getElementById('nav-cta-btn');
+        const heroCtaStart = document.getElementById('hero-cta-start');
+        
+        if (navCtaBtn) {
+          navCtaBtn.textContent = 'Go to Dashboard';
+          navCtaBtn.href = 'dashboard.html';
+        }
+        if (heroCtaStart) {
+          heroCtaStart.textContent = 'Go to Dashboard';
+          heroCtaStart.href = 'dashboard.html';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

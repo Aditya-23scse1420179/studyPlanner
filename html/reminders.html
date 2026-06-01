@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Reminders Checklist</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .reminders-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    @media (max-width: 900px) {
+      .reminders-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Overlay -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div id="app-container">
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-brain"></i>
+          <span class="logo-text">CogniFlow AI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" id="nav-dashboard">
+            <a href="dashboard.html">
+              <i class="fas fa-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-profile">
+            <a href="profile.html">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-learn">
+            <a href="learn-ai.html">
+              <i class="fas fa-robot"></i>
+              <span>Learn With AI</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-progress">
+            <a href="progress.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Progress Tracker</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-reminders">
+            <a href="reminders.html">
+              <i class="fas fa-bell"></i>
+              <span>Reminders</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-community">
+            <a href="community.html">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar-letter">S</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebar-username">Student Name</span>
+          <span class="profile-role" id="sidebar-userskill">Learning DSA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT CONTENT COLUMN -->
+    <main id="main-content">
+      
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+        <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+        </span>
+        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
+          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        </div>
+      </div>
+
+      <!-- Desktop Topbar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="toggle-sidebar-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Study Reminders</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-streak" id="header-streak-badge">
+            <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
+          </div>
+          <div class="topbar-user">
+            <span id="header-username">Student</span>
+            <button class="btn btn-secondary" id="logout-btn" style="padding: 4px 8px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Content -->
+      <div class="page-container fade-in">
+        <h1 style="margin-bottom: 8px;">Reminders Checklist</h1>
+        <p class="page-subtitle">Schedule and manage your study sessions and revision tasks locally.</p>
+
+        <div class="reminders-grid">
+          
+          <!-- LEFT SIDE: FORM -->
+          <div class="card">
+            <h3 id="reminder-form-title" style="margin-bottom: 20px;"><i class="fas fa-plus-circle"></i> Create Reminder</h3>
+            
+            <form id="reminder-form">
+              <div class="form-group">
+                <label for="reminder-topic">Topic / Task Name</label>
+                <input type="text" id="reminder-topic" class="form-control" placeholder="e.g. Review Heap Operations" required>
+              </div>
+
+              <div class="form-group">
+                <label for="reminder-date">Scheduled Date</label>
+                <input type="date" id="reminder-date" class="form-control" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 24px;">
+                <label for="reminder-time">Scheduled Time</label>
+                <input type="time" id="reminder-time" class="form-control" required>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary" id="submit-reminder-btn" style="flex-grow: 1; font-weight: 600;">
+                  <i class="fas fa-plus"></i> Save Reminder
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display: none;">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- RIGHT SIDE: LIST -->
+          <div>
+            <div class="card" style="padding: 24px; min-height: 250px;">
+              <h3 style="margin-bottom: 20px;"><i class="fas fa-calendar-alt"></i> Active Checklists</h3>
+              <div id="reminders-list-container">
+                <!-- Dynamically loaded reminder cards -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-container">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">
+                <i class="fas fa-brain"></i>
+                <h3>CogniFlow AI</h3>
+              </div>
+              <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+            </div>
+            <div class="footer-dev">
+              <h4>Developed By</h4>
+              <p>Aditya Pratap Singh & Akshat</p>
+            </div>
+            <div class="footer-links">
+              <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+              <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>Study Reminders & Checklist System</p>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- Script Modules -->
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/reminders.js"></script>
+  <script>
+    // Sync mobile header streak
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        const mobStreak = document.getElementById('mobile-streak-val');
+        if (mobStreak) mobStreak.textContent = user.streak || 0;
+        
+        // Auto fill date/time fields with current time + 1 hour as helper
+        const dateInput = document.getElementById('reminder-date');
+        const timeInput = document.getElementById('reminder-time');
+        
+        if (dateInput && !dateInput.value) {
+          const now = new Date();
+          const yyyy = now.getFullYear();
+          const mm = String(now.getMonth() + 1).padStart(2, '0');
+          const dd = String(now.getDate()).padStart(2, '0');
+          dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        if (timeInput && !timeInput.value) {
+          const now = new Date();
+          const hh = String((now.getHours() + 1) % 24).padStart(2, '0');
+          const mm = String(now.getMinutes()).padStart(2, '0');
+          timeInput.value = `${hh}:${mm}`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

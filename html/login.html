@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Adaptive Study Planner - Login</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/login.css">
+</head>
+<body class="login-body">
+
+  <div class="auth-container">
+    <div class="auth-logo">
+      <i class="fas fa-brain"></i>
+      <span>CogniFlow AI</span>
+    </div>
+
+    <!-- 1. LOGIN CARD -->
+    <div class="auth-card fade-in" id="login-card">
+      <h2>Sign in to CogniFlow AI</h2>
+      
+      <div class="auth-alert auth-alert-error" id="login-error"></div>
+      <div class="auth-alert auth-alert-success" id="login-success"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+        </div>
+        
+        <div class="form-group">
+          <div class="form-group-flex">
+            <label for="login-password">Password</label>
+            <a href="#" class="forgot-password-link" id="show-forgot-btn">Forgot password?</a>
+          </div>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+      </form>
+
+      <div class="auth-footer">
+        New to CogniFlow AI? <a href="#" id="show-signup-btn">Create an account</a>.
+      </div>
+    </div>
+
+    <!-- 2. SIGNUP CARD -->
+    <div class="auth-card fade-in hidden" id="signup-card">
+      <h2>Create your account</h2>
+      
+      <div class="auth-alert auth-alert-error" id="signup-error"></div>
+      <div class="auth-alert auth-alert-success" id="signup-success"></div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <label for="signup-name">Full name</label>
+          <input type="text" id="signup-name" class="form-control" placeholder="Aditya Pratap" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="signup-email">Email address</label>
+          <input type="email" id="signup-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+        </div>
+        
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label for="signup-confirm-password">Confirm Password</label>
+          <input type="password" id="signup-confirm-password" class="form-control" placeholder="••••••••" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-user-plus"></i> Create Account</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="#" id="show-login-btn">Sign in</a>.
+      </div>
+    </div>
+
+    <!-- 3. FORGOT PASSWORD CARD -->
+    <div class="auth-card fade-in hidden" id="forgot-card">
+      <h2>Reset your password</h2>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
+        Enter your email address and verify your new desired password.
+      </p>
+      
+      <div class="auth-alert auth-alert-error" id="forgot-error"></div>
+      <div class="auth-alert auth-alert-success" id="forgot-success"></div>
+
+      <form id="forgot-form">
+        <div class="form-group">
+          <label for="forgot-email">Email address</label>
+          <input type="email" id="forgot-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="forgot-new-password">New Password</label>
+          <input type="password" id="forgot-new-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-key"></i> Reset Password</button>
+      </form>
+
+      <div class="auth-footer">
+        Remember your details? <a href="#" id="show-login-from-forgot-btn">Back to sign in</a>.
+      </div>
+    </div>
+
+    <div class="auth-credit">
+      <p>Developed By Aditya Pratap Singh & Akshat</p>
+    </div>
+  </div>
+
+  <!-- AuthService Core -->
+  <script src="../js/auth.js"></script>
+
+  <!-- Login Page Controller Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. If already logged in, redirect to dashboard immediately
+      if (AuthService.isAuthenticated()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      // 2. Element References
+      const loginCard = document.getElementById('login-card');
+      const signupCard = document.getElementById('signup-card');
+      const forgotCard = document.getElementById('forgot-card');
+
+      const showSignupBtn = document.getElementById('show-signup-btn');
+      const showLoginBtn = document.getElementById('show-login-btn');
+      const showForgotBtn = document.getElementById('show-forgot-btn');
+      const showLoginFromForgotBtn = document.getElementById('show-login-from-forgot-btn');
+
+      // Forms
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const forgotForm = document.getElementById('forgot-form');
+
+      // Alerts
+      const loginError = document.getElementById('login-error');
+      const loginSuccess = document.getElementById('login-success');
+      const signupError = document.getElementById('signup-error');
+      const signupSuccess = document.getElementById('signup-success');
+      const forgotError = document.getElementById('forgot-error');
+      const forgotSuccess = document.getElementById('forgot-success');
+
+      // Helper to clear alerts
+      function clearAlerts() {
+        const alerts = [loginError, loginSuccess, signupError, signupSuccess, forgotError, forgotSuccess];
+        alerts.forEach(a => {
+          if (a) {
+            a.textContent = '';
+            a.classList.remove('show');
+          }
+        });
+      }
+
+      // 3. Card Switching Click Events
+      showSignupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlerts();
+        loginCard.classList.add('hidden');
+        signupCard.classList.remove('hidden');
+      });
+
+      showLoginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlerts();
+        signupCard.classList.add('hidden');
+        loginCard.classList.remove('hidden');
+      });
+
+      showForgotBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlerts();
+        loginCard.classList.add('hidden');
+        forgotCard.classList.remove('hidden');
+      });
+
+      showLoginFromForgotBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlerts();
+        forgotCard.classList.add('hidden');
+        loginCard.classList.remove('hidden');
+      });
+
+      // 4. Form Actions
+      // Sign In Form Submission
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearAlerts();
+
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        const res = AuthService.login(email, password);
+        if (res.success) {
+          loginSuccess.textContent = "Successfully authenticated! Accessing your planner...";
+          loginSuccess.classList.add('show');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          loginError.textContent = res.message;
+          loginError.classList.add('show');
+        }
+      });
+
+      // Sign Up Form Submission
+      signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearAlerts();
+
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm-password').value;
+
+        if (password.length < 6) {
+          signupError.textContent = "Password must be at least 6 characters.";
+          signupError.classList.add('show');
+          return;
+        }
+
+        if (password !== confirm) {
+          signupError.textContent = "Passwords do not match.";
+          signupError.classList.add('show');
+          return;
+        }
+
+        const res = AuthService.signup(name, email, password);
+        if (res.success) {
+          signupSuccess.textContent = "Account registered successfully! Loading dashboard...";
+          signupSuccess.classList.add('show');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1200);
+        } else {
+          signupError.textContent = res.message;
+          signupError.classList.add('show');
+        }
+      });
+
+      // Reset Password Form Submission
+      forgotForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearAlerts();
+
+        const email = document.getElementById('forgot-email').value.trim();
+        const newPassword = document.getElementById('forgot-new-password').value;
+
+        if (newPassword.length < 6) {
+          forgotError.textContent = "New password must be at least 6 characters.";
+          forgotError.classList.add('show');
+          return;
+        }
+
+        const res = AuthService.resetPassword(email, newPassword);
+        if (res.success) {
+          forgotSuccess.textContent = "Password reset completed! Redirecting back to login...";
+          forgotSuccess.classList.add('show');
+          forgotForm.reset();
+          setTimeout(() => {
+            forgotCard.classList.add('hidden');
+            loginCard.classList.remove('hidden');
+            clearAlerts();
+          }, 2000);
+        } else {
+          forgotError.textContent = res.message;
+          forgotError.classList.add('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

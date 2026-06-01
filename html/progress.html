@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Progress Tracker</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* Stats Layout */
+    .prog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .prog-stat-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .prog-stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+    
+    .prog-stat-header i {
+      font-size: 1.2rem;
+    }
+    
+    .prog-stat-header i.fa-fire {
+      color: #d4a72c;
+    }
+    
+    .prog-stat-number {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .prog-stat-bar-container {
+      height: 6px;
+      background-color: var(--bg-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .prog-stat-bar-fill {
+      height: 100%;
+      background-color: var(--accent-blue);
+      width: 0%;
+      transition: width 0.8s ease-in-out;
+    }
+    
+    .prog-stat-footer {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* SVG Radial Progress Section */
+    .rings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .ring-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 28px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .ring-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .ring-svg-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 12px 0;
+    }
+    
+    .ring-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    
+    .ring-circle-bg {
+      fill: none;
+      stroke: var(--bg-secondary);
+      stroke-width: 8;
+    }
+    
+    .ring-circle-fill {
+      fill: none;
+      stroke: var(--accent-blue);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 251; /* circumference = 2 * PI * r (r=40, C=251.3) */
+      stroke-dashoffset: 251;
+      transition: stroke-dashoffset 0.8s ease-in-out;
+    }
+    
+    .ring-circle-fill.success {
+      stroke: var(--color-success);
+    }
+    
+    .ring-text-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    @media (max-width: 768px) {
+      .rings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- App Container -->
+  <div id="app-container">
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-brain"></i>
+          <span class="logo-text">CogniFlow AI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" id="nav-dashboard">
+            <a href="dashboard.html">
+              <i class="fas fa-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-profile">
+            <a href="profile.html">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-learn">
+            <a href="learn-ai.html">
+              <i class="fas fa-robot"></i>
+              <span>Learn With AI</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-progress">
+            <a href="progress.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Progress Tracker</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-reminders">
+            <a href="reminders.html">
+              <i class="fas fa-bell"></i>
+              <span>Reminders</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-community">
+            <a href="community.html">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar-letter">S</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebar-username">Student Name</span>
+          <span class="profile-role" id="sidebar-userskill">Learning DSA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT CONTENT COLUMN -->
+    <main id="main-content">
+      
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+        <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+        </span>
+        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
+          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        </div>
+      </div>
+
+      <!-- Desktop Topbar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="toggle-sidebar-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Progress Tracker</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-streak" id="header-streak-badge">
+            <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
+          </div>
+          <div class="topbar-user">
+            <span id="header-username">Student</span>
+            <button class="btn btn-secondary" id="logout-btn" style="padding: 4px 8px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="page-container fade-in">
+        <h1 style="margin-bottom: 8px;">Academic Analytics</h1>
+        <p class="page-subtitle">Track your adaptive study goals and assessment milestones in real-time.</p>
+
+        <!-- CODECHEF STYLE STATS CARDS -->
+        <div class="prog-grid">
+          
+          <!-- 1. Day Streak -->
+          <div class="prog-stat-card">
+            <div class="prog-stat-header">
+              <span>Study Streak</span>
+              <i class="fas fa-fire"></i>
+            </div>
+            <div class="prog-stat-number" id="prog-streak">0 Days</div>
+            <div class="prog-stat-bar-container">
+              <div class="prog-stat-bar-fill" id="prog-streak-bar-fill"></div>
+            </div>
+            <div class="prog-stat-footer">
+              Target: 30 days daily consistency
+            </div>
+          </div>
+
+          <!-- 2. Modules Completed -->
+          <div class="prog-stat-card">
+            <div class="prog-stat-header">
+              <span>Modules Done</span>
+              <i class="fas fa-check-double" style="color: var(--accent-blue);"></i>
+            </div>
+            <div class="prog-stat-number" id="prog-modules">0 Modules</div>
+            <div class="prog-stat-bar-container">
+              <div class="prog-stat-bar-fill" id="prog-modules-bar-fill"></div>
+            </div>
+            <div class="prog-stat-footer">
+              Target: 12 syllabus sections
+            </div>
+          </div>
+
+          <!-- 3. Hours Studied -->
+          <div class="prog-stat-card">
+            <div class="prog-stat-header">
+              <span>Study Hours</span>
+              <i class="fas fa-clock" style="color: var(--text-secondary);"></i>
+            </div>
+            <div class="prog-stat-number" id="prog-hours">0 Hours</div>
+            <div class="prog-stat-bar-container">
+              <div class="prog-stat-bar-fill" id="prog-hours-bar-fill"></div>
+            </div>
+            <div class="prog-stat-footer">
+              Target: 100 hours master mark
+            </div>
+          </div>
+
+          <!-- 4. Active Skill & Score -->
+          <div class="prog-stat-card">
+            <div class="prog-stat-header">
+              <span>Target Skill</span>
+              <i class="fas fa-graduation-cap" style="color: var(--color-success)"></i>
+            </div>
+            <div class="prog-stat-number" id="prog-skill" style="font-size: 1.15rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 6px;">
+              None selected
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+              Last score: <span id="prog-score" style="color: var(--accent-blue);">N/A</span>
+            </div>
+            <div class="prog-stat-footer" style="margin-top: auto;">
+              Proficiency level evaluation
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PURE SVG/CSS CIRCULAR RADIAL METERS -->
+        <div class="rings-grid">
+          
+          <!-- Quiz Accuracy Meter -->
+          <div class="ring-card">
+            <h3><i class="fas fa-bullseye" style="color: var(--color-danger);"></i> MCQ Evaluation Accuracy</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.3;">
+              Measures correct response ratios on active evaluations.
+            </p>
+            <div class="ring-svg-container">
+              <svg class="ring-svg" viewBox="0 0 100 100">
+                <circle class="ring-circle-bg" cx="50" cy="50" r="40"></circle>
+                <circle class="ring-circle-fill" id="accuracy-ring-fill" cx="50" cy="50" r="40"></circle>
+              </svg>
+              <div class="ring-text-inner" id="accuracy-text-val">0%</div>
+            </div>
+          </div>
+
+          <!-- Course Syllabus Completion Meter -->
+          <div class="ring-card">
+            <h3><i class="fas fa-clipboard-list" style="color: var(--color-success);"></i> Course Syllabus Progress</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.3;">
+              Calculates syllabus milestone accomplishments.
+            </p>
+            <div class="ring-svg-container">
+              <svg class="ring-svg" viewBox="0 0 100 100">
+                <circle class="ring-circle-bg" cx="50" cy="50" r="40"></circle>
+                <circle class="ring-circle-fill success" id="completion-ring-fill" cx="50" cy="50" r="40"></circle>
+              </svg>
+              <div class="ring-text-inner" id="completion-text-val">0%</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-container">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">
+                <i class="fas fa-brain"></i>
+                <h3>CogniFlow AI</h3>
+              </div>
+              <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+            </div>
+            <div class="footer-dev">
+              <h4>Developed By</h4>
+              <p>Aditya Pratap Singh & Akshat</p>
+            </div>
+            <div class="footer-links">
+              <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+              <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>Circular Progress Gauges & Analytics Page</p>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/progress.js"></script>
+  <script>
+    // Sync mobile header streak
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        const mobStreak = document.getElementById('mobile-streak-val');
+        if (mobStreak) mobStreak.textContent = user.streak || 0;
+      }
+    });
+  </script>
+</body>
+</html>

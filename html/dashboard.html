@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniFlow AI - Adaptive Study Planner - Dashboard</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+  <!-- Menu Overlay for Mobile Navigation -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div id="app-container">
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-brain"></i>
+          <span class="logo-text">CogniFlow AI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" id="nav-dashboard">
+            <a href="dashboard.html">
+              <i class="fas fa-th-large"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-profile">
+            <a href="profile.html">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-learn">
+            <a href="learn-ai.html">
+              <i class="fas fa-robot"></i>
+              <span>Learn With AI</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-progress">
+            <a href="progress.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Progress Tracker</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-reminders">
+            <a href="reminders.html">
+              <i class="fas fa-bell"></i>
+              <span>Reminders</span>
+            </a>
+          </li>
+          <li class="nav-item" id="nav-community">
+            <a href="community.html">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar User Profile Info Widget -->
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="sidebar-avatar-letter">S</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebar-username">Student Name</span>
+          <span class="profile-role" id="sidebar-userskill">Learning DSA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT COLUMN -->
+    <main id="main-content">
+      
+      <!-- Mobile Sticky Top Header -->
+      <div class="mobile-header">
+        <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+        <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+        </span>
+        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
+          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        </div>
+      </div>
+
+      <!-- Desktop Top Navigation Bar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="toggle-sidebar-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Dashboard</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-streak" id="header-streak-badge">
+            <i class="fas fa-fire"></i> <span id="header-streak-val">0</span> Day Streak
+          </div>
+          <div class="topbar-user">
+            <span id="header-username">Student</span>
+            <button class="btn btn-secondary" id="logout-btn" style="padding: 4px 8px; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Layout Body Container -->
+      <div class="page-container fade-in">
+        
+        <!-- Hero Search Section -->
+        <section class="hero-section">
+          <h1>Learn Smarter, Not Harder</h1>
+          <p>Adaptive study planning based on your learning journey.</p>
+          
+          <div class="search-container">
+            <div class="search-icon"><i class="fas fa-search"></i></div>
+            <input type="text" id="search-input" class="search-input" placeholder="What skill do you want to learn? (e.g. DSA, JavaScript, DevOps)">
+            <button class="btn btn-primary search-btn" id="search-btn">Search</button>
+          </div>
+
+          <div class="trending-tags">
+            <span class="tag-chip" data-skill="DSA">DSA</span>
+            <span class="tag-chip" data-skill="Web Development">Web Development</span>
+            <span class="tag-chip" data-skill="Machine Learning">Machine Learning</span>
+            <span class="tag-chip" data-skill="System Design">System Design</span>
+            <span class="tag-chip" data-skill="SQL">SQL</span>
+          </div>
+        </section>
+
+        <!-- INFINITE TRENDING SKILLS CAROUSEL SECTION -->
+        <section class="carousel-section">
+          <h2><i class="fas fa-chart-line" style="color: var(--accent-blue);"></i> Trending Skills</h2>
+          <div class="carousel-container">
+            <div class="carousel-track">
+              
+              <!-- Original 11 Skill Cards -->
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-code"></i>
+                  <span>HOT</span>
+                </div>
+                <h3>DSA</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 60 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 95%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-laptop-code"></i>
+                  <span>TRENDING</span>
+                </div>
+                <h3>Web Development</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 120 hrs</span>
+                  <span>Beginner</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 90%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-brain"></i>
+                  <span>NEW</span>
+                </div>
+                <h3>Machine Learning</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 80 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 88%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-chart-pie"></i>
+                  <span>POPULAR</span>
+                </div>
+                <h3>Data Science</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 90 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 84%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fab fa-java"></i>
+                  <span>CORE</span>
+                </div>
+                <h3>Java</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 50 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 80%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fab fa-js"></i>
+                  <span>POPULAR</span>
+                </div>
+                <h3>JavaScript</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 40 hrs</span>
+                  <span>Beginner</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 92%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-database"></i>
+                  <span>ESSENTIAL</span>
+                </div>
+                <h3>SQL</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 30 hrs</span>
+                  <span>Beginner</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 85%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-sitemap"></i>
+                  <span>ARCH</span>
+                </div>
+                <h3>System Design</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 70 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 82%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-cloud"></i>
+                  <span>GROWING</span>
+                </div>
+                <h3>Cloud</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 45 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 78%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-infinity"></i>
+                  <span>INFRA</span>
+                </div>
+                <h3>DevOps</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 65 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 81%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>SECURITY</span>
+                </div>
+                <h3>Cyber Security</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 55 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 76%"></div></div>
+                </div>
+              </div>
+
+              <!-- Duplicate Cards for Infinite Scrolling Loop -->
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-code"></i>
+                  <span>HOT</span>
+                </div>
+                <h3>DSA</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 60 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 95%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-laptop-code"></i>
+                  <span>TRENDING</span>
+                </div>
+                <h3>Web Development</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 120 hrs</span>
+                  <span>Beginner</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 90%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-brain"></i>
+                  <span>NEW</span>
+                </div>
+                <h3>Machine Learning</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 80 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 88%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-chart-pie"></i>
+                  <span>POPULAR</span>
+                </div>
+                <h3>Data Science</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 90 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 84%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fab fa-java"></i>
+                  <span>CORE</span>
+                </div>
+                <h3>Java</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 50 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 80%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fab fa-js"></i>
+                  <span>POPULAR</span>
+                </div>
+                <h3>JavaScript</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 40 hrs</span>
+                  <span>Beginner</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 92%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-database"></i>
+                  <span>ESSENTIAL</span>
+                </div>
+                <h3>SQL</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 30 hrs</span>
+                  <span>Beginner</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 85%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-sitemap"></i>
+                  <span>ARCH</span>
+                </div>
+                <h3>System Design</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 70 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 82%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-cloud"></i>
+                  <span>GROWING</span>
+                </div>
+                <h3>Cloud</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 45 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 78%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-infinity"></i>
+                  <span>INFRA</span>
+                </div>
+                <h3>DevOps</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 65 hrs</span>
+                  <span>Intermediate</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 81%"></div></div>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="card-header-skill">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>SECURITY</span>
+                </div>
+                <h3>Cyber Security</h3>
+                <div class="card-meta-details">
+                  <span><i class="fas fa-clock"></i> 55 hrs</span>
+                  <span>Advanced</span>
+                </div>
+                <div class="popularity-indicator">
+                  <div class="mini-bar"><div class="mini-bar-fill" style="width: 76%"></div></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- DASHBOARD DETAILS GRID (PROGRESS + INTELLIGENCE CIRCLE) -->
+        <div class="dashboard-grid">
+          
+          <!-- CodeChef Stats Card Section -->
+          <div class="card">
+            <h3 class="card-title"><i class="fas fa-chart-line"></i> Learning Performance Overview</h3>
+            <div class="stats-card-grid">
+              
+              <!-- 1. Day Streak -->
+              <div class="stat-item-card">
+                <div class="stat-icon-box accent"><i class="fas fa-fire"></i></div>
+                <div class="stat-info-details">
+                  <span class="stat-number" id="stat-streak-val">0</span>
+                  <span class="stat-desc">Current Streak</span>
+                </div>
+              </div>
+
+              <!-- 2. Modules Completed -->
+              <div class="stat-item-card">
+                <div class="stat-icon-box"><i class="fas fa-check-double"></i></div>
+                <div class="stat-info-details">
+                  <span class="stat-number" id="stat-modules-val">0</span>
+                  <span class="stat-desc">Modules Done</span>
+                </div>
+              </div>
+
+              <!-- 3. Study Hours -->
+              <div class="stat-item-card">
+                <div class="stat-icon-box"><i class="fas fa-clock"></i></div>
+                <div class="stat-info-details">
+                  <span class="stat-number" id="stat-hours-val">0</span>
+                  <span class="stat-desc">Hours Studied</span>
+                </div>
+              </div>
+
+              <!-- 4. Current Skill -->
+              <div class="stat-item-card">
+                <div class="stat-icon-box"><i class="fas fa-graduation-cap"></i></div>
+                <div class="stat-info-details">
+                  <span class="stat-number" id="stat-skill-val" style="font-size: 1.05rem; font-weight: 700;">None</span>
+                  <span class="stat-desc">Active Skill</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Learning Intelligence SVG Radial Circle -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom: 8px;"><i class="fas fa-brain"></i> Intelligence Score</h3>
+            <div class="score-card-layout">
+              <div class="score-visual">
+                <svg class="score-svg" viewBox="0 0 140 140">
+                  <circle class="score-svg-circle-bg" cx="70" cy="70" r="60"></circle>
+                  <circle class="score-svg-circle-fill" id="score-circle-fill" cx="70" cy="70" r="60"></circle>
+                </svg>
+                <div class="score-text-inner">
+                  <span class="score-num-bold" id="score-num">0</span>
+                  <span class="score-max-label">PTS</span>
+                </div>
+              </div>
+              <p class="score-explanation">
+                Calculated based on your study consistency, active streak, and recent skill assessment grades.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- FOOTER REVIEWS CAROUSEL MARQUEE -->
+        <section class="footer-reviews-carousel-section">
+          <div class="reviews-carousel-container">
+            <div class="reviews-carousel-track">
+              
+              <!-- Original 6 Testimonials -->
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">R</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Rahul Sharma (Google)</span>
+                  <p class="review-card-text">"DSA evaluation is gold!"</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">P</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Priya Patel (Microsoft)</span>
+                  <p class="review-card-text">"Bouncing streak kept me consistent."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">A</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Amit Kumar (Amazon)</span>
+                  <p class="review-card-text">"ML diagnostic is solid."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">S</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Sneha Reddy (Full Stack)</span>
+                  <p class="review-card-text">"Clean Notion aesthetics!"</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">V</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Vikash Singh (Meta)</span>
+                  <p class="review-card-text">"Reminders keep revision organized."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">G</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Ananya Gupta (Flipkart)</span>
+                  <p class="review-card-text">"Flawless MCQ diagnostic."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <!-- Duplicate 6 Testimonials for Seamless Infinite Loop -->
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">R</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Rahul Sharma (Google)</span>
+                  <p class="review-card-text">"DSA evaluation is gold!"</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">P</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Priya Patel (Microsoft)</span>
+                  <p class="review-card-text">"Bouncing streak kept me consistent."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">A</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Amit Kumar (Amazon)</span>
+                  <p class="review-card-text">"ML diagnostic is solid."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">S</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Sneha Reddy (Full Stack)</span>
+                  <p class="review-card-text">"Clean Notion aesthetics!"</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">V</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Vikash Singh (Meta)</span>
+                  <p class="review-card-text">"Reminders keep revision organized."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+              <div class="review-carousel-card">
+                <div class="review-card-avatar">G</div>
+                <div class="review-card-info">
+                  <span class="review-card-name">Ananya Gupta (Flipkart)</span>
+                  <p class="review-card-text">"Flawless MCQ diagnostic."</p>
+                  <span class="review-card-stars">★★★★★</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- FOOTER IMPROVEMENT FORM -->
+        <section class="footer-improvement-section">
+          <h3><i class="fas fa-lightbulb" style="color: var(--color-warning);"></i> Help Us Improve CogniFlow AI</h3>
+          <div class="alert alert-success" id="improvement-success-alert" style="display: none; padding: 8px 12px; font-size: 0.82rem; margin-bottom: 12px;">
+            <i class="fas fa-check-circle"></i> Thank you! Your suggestion has been saved.
+          </div>
+          <form id="improvement-form" class="improvement-form-grid">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="imp-name" style="font-size: 0.78rem; margin-bottom: 4px;">Name</label>
+              <input type="text" id="imp-name" class="form-control" placeholder="Rahul" required style="padding: 6px 10px; font-size: 0.85rem;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="imp-email" style="font-size: 0.78rem; margin-bottom: 4px;">Email</label>
+              <input type="email" id="imp-email" class="form-control" placeholder="rahul@email.com" required style="padding: 6px 10px; font-size: 0.85rem;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="imp-text" style="font-size: 0.78rem; margin-bottom: 4px;">Suggestion</label>
+              <input type="text" id="imp-text" class="form-control" placeholder="How can we make this study planner better?" required style="padding: 6px 10px; font-size: 0.85rem;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding: 7px 16px; font-size: 0.85rem; font-weight: 600; height: 32px; margin-bottom: 1px;">
+              Submit Idea
+            </button>
+          </form>
+        </section>
+
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-container">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">
+                <i class="fas fa-brain"></i>
+                <h3>CogniFlow AI</h3>
+              </div>
+              <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
+            </div>
+            <div class="footer-dev">
+              <h4>Developed By</h4>
+              <p>Aditya Pratap Singh & Akshat</p>
+            </div>
+            <div class="footer-links">
+              <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/aditya-pratap-singh-9b310327a/" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+              <a href="mailto:adityapratapsingh412261@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>Adaptive Study Planner MVP Dashboard</p>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- FLOATING FEEDBACK DIAL BUTTON -->
+  <button id="floating-feedback-btn" class="floating-feedback-btn" title="Submit Feedback">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+
+  <!-- FEEDBACK POPUP MODAL -->
+  <div class="feedback-modal" id="feedback-modal">
+    <div class="feedback-modal-content">
+      <button class="modal-close-btn" id="modal-close-btn"><i class="fas fa-times"></i></button>
+      <h3 style="margin-bottom: 8px;"><i class="fas fa-comment-alt" style="color: var(--accent-blue);"></i> Student Feedback</h3>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 20px;">
+        Share your study journey feedback or any features you would like us to add!
+      </p>
+
+      <div class="alert alert-success" id="modal-feedback-success" style="display: none; padding: 8px 12px; font-size: 0.82rem; margin-bottom: 12px;">
+        <i class="fas fa-check-circle"></i> Suggestion recorded successfully. Thank you!
+      </div>
+
+      <form id="modal-feedback-form">
+        <div class="form-group">
+          <label for="modal-fb-name">Full Name</label>
+          <input type="text" id="modal-fb-name" class="form-control" placeholder="Your Name" required>
+        </div>
+        <div class="form-group">
+          <label for="modal-fb-email">Email Address</label>
+          <input type="email" id="modal-fb-email" class="form-control" placeholder="name@email.com" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label for="modal-fb-message">Suggestion / Review</label>
+          <textarea id="modal-fb-message" class="form-control" placeholder="Type your comment..." rows="3" required style="resize: vertical; font-family: var(--font-sans);"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-weight: 600;">
+          Submit Feedback
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script Imports -->
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        // Sync mobile header streak
+        const mobStreak = document.getElementById('mobile-streak-val');
+        if (mobStreak) mobStreak.textContent = user.streak || 0;
+
+        // Pre-fill Forms
+        const impName = document.getElementById('imp-name');
+        const impEmail = document.getElementById('imp-email');
+        const fbName = document.getElementById('modal-fb-name');
+        const fbEmail = document.getElementById('modal-fb-email');
+
+        if (impName) impName.value = user.name;
+        if (impEmail) impEmail.value = user.email;
+        if (fbName) fbName.value = user.name;
+        if (fbEmail) fbEmail.value = user.email;
+      }
+
+      // Floating Feedback Modal Actions
+      const floatBtn = document.getElementById('floating-feedback-btn');
+      const modal = document.getElementById('feedback-modal');
+      const closeBtn = document.getElementById('modal-close-btn');
+
+      if (floatBtn && modal) {
+        floatBtn.addEventListener('click', () => {
+          modal.classList.add('show');
+        });
+      }
+
+      if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+          modal.classList.remove('show');
+        });
+      }
+
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('show');
+          }
+        });
+      }
+
+      // Modal Form Submit
+      const modalForm = document.getElementById('modal-feedback-form');
+      const modalSuccess = document.getElementById('modal-feedback-success');
+
+      if (modalForm) {
+        modalForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          
+          const name = document.getElementById('modal-fb-name').value.trim();
+          const email = document.getElementById('modal-fb-email').value.trim();
+          const message = document.getElementById('modal-fb-message').value.trim();
+
+          const submission = { id: Date.now(), name, email, message, date: new Date().toISOString() };
+          try {
+            const list = JSON.parse(localStorage.getItem('cogniflow_feedback_submissions') || '[]');
+            list.push(submission);
+            localStorage.setItem('cogniflow_feedback_submissions', JSON.stringify(list));
+          } catch(err) {
+            console.error("Local feedback write failed", err);
+          }
+
+          document.getElementById('modal-fb-message').value = '';
+          if (modalSuccess) {
+            modalSuccess.style.display = 'block';
+            setTimeout(() => {
+              modalSuccess.style.display = 'none';
+              modal.classList.remove('show');
+            }, 1500);
+          }
+        });
+      }
+
+      // Improvement Form Submit in Footer
+      const impForm = document.getElementById('improvement-form');
+      const impSuccess = document.getElementById('improvement-success-alert');
+
+      if (impForm) {
+        impForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById('imp-name').value.trim();
+          const email = document.getElementById('imp-email').value.trim();
+          const suggestion = document.getElementById('imp-text').value.trim();
+
+          const data = { id: Date.now(), name, email, suggestion, date: new Date().toISOString() };
+          try {
+            const list = JSON.parse(localStorage.getItem('cogniflow_improvements') || '[]');
+            list.push(data);
+            localStorage.setItem('cogniflow_improvements', JSON.stringify(list));
+          } catch(err) {
+            console.error("Local improvements write failed", err);
+          }
+
+          document.getElementById('imp-text').value = '';
+          if (impSuccess) {
+            impSuccess.style.display = 'block';
+            setTimeout(() => {
+              impSuccess.style.display = 'none';
+            }, 3000);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
