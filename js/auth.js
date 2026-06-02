@@ -1,12 +1,12 @@
 /**
  * AuthService: Handles user registration, sessions, login, logout,
- * and page auth guards for CogniFlow AI.
+ * and page auth guards for LearnSprint AI.
  */
 
 const AuthService = {
   // Get active session user
   getCurrentUser() {
-    const session = localStorage.getItem('cogniflow_session');
+    const session = localStorage.getItem('LearnSprint_session');
     if (!session) return null;
     try {
       return JSON.parse(session);
@@ -23,7 +23,7 @@ const AuthService = {
 
   // Login handler
   login(email, password) {
-    const users = JSON.parse(localStorage.getItem('cogniflow_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('LearnSprint_users') || '[]');
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
     
     if (user) {
@@ -38,7 +38,7 @@ const AuthService = {
         hours: user.hours || 0,
         modules: user.modules || 0
       };
-      localStorage.setItem('cogniflow_session', JSON.stringify(sessionData));
+      localStorage.setItem('LearnSprint_session', JSON.stringify(sessionData));
       return { success: true };
     }
     return { success: false, message: 'Invalid email or password.' };
@@ -46,7 +46,7 @@ const AuthService = {
 
   // Registration handler
   signup(name, email, password) {
-    const users = JSON.parse(localStorage.getItem('cogniflow_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('LearnSprint_users') || '[]');
     if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
       return { success: false, message: 'Email address is already registered.' };
     }
@@ -65,10 +65,10 @@ const AuthService = {
     };
 
     users.push(newUser);
-    localStorage.setItem('cogniflow_users', JSON.stringify(users));
+    localStorage.setItem('LearnSprint_users', JSON.stringify(users));
 
     // Sign in automatically
-    localStorage.setItem('cogniflow_session', JSON.stringify({
+    localStorage.setItem('LearnSprint_session', JSON.stringify({
       name: newUser.name,
       email: newUser.email,
       joined: newUser.joined,
@@ -85,12 +85,12 @@ const AuthService = {
 
   // Password reset handler
   resetPassword(email, newPassword) {
-    const users = JSON.parse(localStorage.getItem('cogniflow_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('LearnSprint_users') || '[]');
     const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
 
     if (userIndex !== -1) {
       users[userIndex].password = newPassword;
-      localStorage.setItem('cogniflow_users', JSON.stringify(users));
+      localStorage.setItem('LearnSprint_users', JSON.stringify(users));
       return { success: true };
     }
     return { success: false, message: 'Email address not found in our database.' };
@@ -98,10 +98,10 @@ const AuthService = {
 
   // Sync session changes back to user database
   syncSession(updatedUser) {
-    localStorage.setItem('cogniflow_session', JSON.stringify(updatedUser));
+    localStorage.setItem('LearnSprint_session', JSON.stringify(updatedUser));
     
     // Also save in users list
-    const users = JSON.parse(localStorage.getItem('cogniflow_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('LearnSprint_users') || '[]');
     const userIndex = users.findIndex(u => u.email.toLowerCase() === updatedUser.email.toLowerCase());
     if (userIndex !== -1) {
       users[userIndex].name = updatedUser.name;
@@ -111,13 +111,13 @@ const AuthService = {
       users[userIndex].streak = updatedUser.streak;
       users[userIndex].hours = updatedUser.hours;
       users[userIndex].modules = updatedUser.modules;
-      localStorage.setItem('cogniflow_users', JSON.stringify(users));
+      localStorage.setItem('LearnSprint_users', JSON.stringify(users));
     }
   },
 
   // Log user out
   logout() {
-    localStorage.removeItem('cogniflow_session');
+    localStorage.removeItem('LearnSprint_session');
     window.location.href = 'login.html';
   },
 

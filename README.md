@@ -1,10 +1,10 @@
-# CogniFlow AI – Adaptive Study Planner
+# LearnSprint AI – Adaptive Study Planner
 
 ## Overview
 
-CogniFlow AI is an AI-powered adaptive study planner designed to help students learn more effectively by creating personalized study plans based on their learning abilities, performance, and available study time.
+LearnSprint AI is an AI-powered adaptive study planner designed to help students learn more effectively by creating personalized study plans based on their learning abilities, performance, and available study time.
 
-Unlike traditional timetable applications that provide the same schedule to everyone, CogniFlow AI aims to adapt learning paths according to individual student needs.
+Unlike traditional timetable applications that provide the same schedule to everyone, LearnSprint AI aims to adapt learning paths according to individual student needs.
 
 ---
 
@@ -24,7 +24,7 @@ Most existing study planners are static and fail to adapt to a student's progres
 
 ## Proposed Solution
 
-CogniFlow AI provides:
+LearnSprint AI provides:
 
 * Personalized study planning
 * Skill-based learning paths

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (sidebar) {
     // Read state from storage
-    const isCollapsed = localStorage.getItem('cogniflow_sidebar_collapsed') === 'true';
+    const isCollapsed = localStorage.getItem('LearnSprint_sidebar_collapsed') === 'true';
     if (isCollapsed) {
       sidebar.classList.add('collapsed');
     }
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleBtn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
         // Save current state
-        localStorage.setItem('cogniflow_sidebar_collapsed', sidebar.classList.contains('collapsed'));
+        localStorage.setItem('LearnSprint_sidebar_collapsed', sidebar.classList.contains('collapsed'));
       });
     }
   }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggleBtn.addEventListener('click', () => {
       document.body.classList.toggle('dark-theme');
       const isDarkNow = document.body.classList.contains('dark-theme');
-      localStorage.setItem('cogniflow_theme', isDarkNow ? 'dark' : 'light');
+      localStorage.setItem('LearnSprint_theme', isDarkNow ? 'dark' : 'light');
       syncThemeUI();
     });
   }

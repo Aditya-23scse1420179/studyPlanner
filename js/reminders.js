@@ -21,7 +21,7 @@ class RemindersController {
     
     if (!this.sessionUser) return;
     
-    this.storageKey = `cogniflow_reminders_${this.sessionUser.email.toLowerCase()}`;
+    this.storageKey = `LearnSprint_reminders_${this.sessionUser.email.toLowerCase()}`;
     
     // 2. Load lists
     this.loadReminders();

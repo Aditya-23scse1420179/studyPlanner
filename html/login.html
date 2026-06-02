@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CogniFlow AI - Adaptive Study Planner - Login</title>
+  <title>LearnSprint AI - Adaptive Study Planner - Login</title>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Stylesheets -->
@@ -13,7 +13,7 @@
 <body class="login-body">
   <script>
     (function() {
-      const theme = localStorage.getItem('cogniflow_theme') || 'light';
+      const theme = localStorage.getItem('LearnSprint_theme') || 'light';
       if (theme === 'dark') {
         document.body.classList.add('dark-theme');
       }
@@ -28,12 +28,12 @@
   <div class="auth-container">
     <div class="auth-logo">
       <i class="fas fa-brain"></i>
-      <span>CogniFlow AI</span>
+      <span>LearnSprint AI</span>
     </div>
 
     <!-- 1. LOGIN CARD -->
     <div class="auth-card fade-in" id="login-card">
-      <h2>Sign in to CogniFlow AI</h2>
+      <h2>Sign in to LearnSprint AI</h2>
       
       <div class="auth-alert auth-alert-error" id="login-error"></div>
       <div class="auth-alert auth-alert-success" id="login-success"></div>
@@ -56,7 +56,7 @@
       </form>
 
       <div class="auth-footer">
-        New to CogniFlow AI? <a href="#" id="show-signup-btn">Create an account</a>.
+        New to LearnSprint AI? <a href="#" id="show-signup-btn">Create an account</a>.
       </div>
     </div>
 
@@ -306,7 +306,7 @@
         themeToggleBtn.addEventListener('click', () => {
           document.body.classList.toggle('dark-theme');
           const isDarkNow = document.body.classList.contains('dark-theme');
-          localStorage.setItem('cogniflow_theme', isDarkNow ? 'dark' : 'light');
+          localStorage.setItem('LearnSprint_theme', isDarkNow ? 'dark' : 'light');
           syncThemeUI();
         });
       }

@@ -132,7 +132,7 @@ class ProgressController {
     const completionPct = Math.min(100, (user.modules || 0) * 8 || 0);
 
     const reportContent = `==================================================
-        COGNIFLOW AI - ADAPTIVE STUDY PLANNER REPORT
+        LearnSprint AI - ADAPTIVE STUDY PLANNER REPORT
 ==================================================
 Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
 Student Name: ${user.name}
@@ -160,7 +160,7 @@ Daily Streak Goal (30 Days)   : [${'#'.repeat(Math.round(Math.min(100, ((user.st
 Study Hours Goal (100 Hours)   : [${'#'.repeat(Math.round(Math.min(100, ((user.hours || 0)/100)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.hours || 0)/100)*100)/5))}] ${Math.min(100, Math.round(((user.hours || 0)/100)*100))}%
 Syllabus Modules Goal (12 Modules): [${'#'.repeat(Math.round(Math.min(100, ((user.modules || 0)/12)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.modules || 0)/12)*100)/5))}] ${Math.min(100, Math.round(((user.modules || 0)/12)*100))}%
 
-Keep studying and tracking your goals with CogniFlow AI!
+Keep studying and tracking your goals with LearnSprint AI!
 ==================================================`;
 
     try {
@@ -168,7 +168,7 @@ Keep studying and tracking your goals with CogniFlow AI!
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `CogniFlow_Progress_Report_${user.name.replace(/\s+/g, '_')}.txt`;
+      link.download = `LearnSprint_Progress_Report_${user.name.replace(/\s+/g, '_')}.txt`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

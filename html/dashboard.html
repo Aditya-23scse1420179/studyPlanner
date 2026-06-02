@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CogniFlow AI - Adaptive Study Planner - Dashboard</title>
+  <title>LearnSprint AI - Adaptive Study Planner - Dashboard</title>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Stylesheets -->
@@ -13,7 +13,7 @@
 <body>
   <script>
     (function() {
-      const theme = localStorage.getItem('cogniflow_theme') || 'light';
+      const theme = localStorage.getItem('LearnSprint_theme') || 'light';
       if (theme === 'dark') {
         document.body.classList.add('dark-theme');
       }
@@ -31,7 +31,7 @@
       <div class="sidebar-header">
         <div class="sidebar-logo">
           <i class="fas fa-brain"></i>
-          <span class="logo-text">CogniFlow AI</span>
+          <span class="logo-text">LearnSprint AI</span>
         </div>
       </div>
       
@@ -93,7 +93,7 @@
       <div class="mobile-header">
         <button class="toggle-sidebar-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
         <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> CogniFlow AI
+          <i class="fas fa-brain" style="color: var(--accent-blue);"></i> LearnSprint AI
         </span>
         <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
           <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
@@ -676,7 +676,7 @@
 
         <!-- FOOTER IMPROVEMENT FORM -->
         <section class="footer-improvement-section">
-          <h3><i class="fas fa-lightbulb" style="color: var(--color-warning);"></i> Help Us Improve CogniFlow AI</h3>
+          <h3><i class="fas fa-lightbulb" style="color: var(--color-warning);"></i> Help Us Improve LearnSprint AI</h3>
           <div class="alert alert-success" id="improvement-success-alert" style="display: none; padding: 8px 12px; font-size: 0.82rem; margin-bottom: 12px;">
             <i class="fas fa-check-circle"></i> Thank you! Your suggestion has been saved.
           </div>
@@ -708,7 +708,7 @@
             <div class="footer-brand">
               <div class="footer-logo">
                 <i class="fas fa-brain"></i>
-                <h3>CogniFlow AI</h3>
+                <h3>LearnSprint AI</h3>
               </div>
               <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
             </div>
@@ -723,7 +723,7 @@
             </div>
           </div>
           <div class="footer-bottom">
-            <p>© 2026 CogniFlow AI. All rights reserved.</p>
+            <p>© 2026 LearnSprint AI. All rights reserved.</p>
             <p>Adaptive Study Planner MVP Dashboard</p>
           </div>
         </div>
@@ -834,9 +834,9 @@
 
           const submission = { id: Date.now(), name, email, message, date: new Date().toISOString() };
           try {
-            const list = JSON.parse(localStorage.getItem('cogniflow_feedback_submissions') || '[]');
+            const list = JSON.parse(localStorage.getItem('LearnSprint_feedback_submissions') || '[]');
             list.push(submission);
-            localStorage.setItem('cogniflow_feedback_submissions', JSON.stringify(list));
+            localStorage.setItem('LearnSprint_feedback_submissions', JSON.stringify(list));
           } catch(err) {
             console.error("Local feedback write failed", err);
           }
@@ -866,9 +866,9 @@
 
           const data = { id: Date.now(), name, email, suggestion, date: new Date().toISOString() };
           try {
-            const list = JSON.parse(localStorage.getItem('cogniflow_improvements') || '[]');
+            const list = JSON.parse(localStorage.getItem('LearnSprint_improvements') || '[]');
             list.push(data);
-            localStorage.setItem('cogniflow_improvements', JSON.stringify(list));
+            localStorage.setItem('LearnSprint_improvements', JSON.stringify(list));
           } catch(err) {
             console.error("Local improvements write failed", err);
           }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CogniFlow AI - Adaptive Study Planner</title>
+  <title>LearnSprint AI - Adaptive Study Planner</title>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Stylesheets -->
@@ -138,7 +138,7 @@
 <body>
   <script>
     (function() {
-      const theme = localStorage.getItem('cogniflow_theme') || 'light';
+      const theme = localStorage.getItem('LearnSprint_theme') || 'light';
       if (theme === 'dark') {
         document.body.classList.add('dark-theme');
       }
@@ -149,7 +149,7 @@
   <header class="landing-header">
     <div class="landing-logo">
       <i class="fas fa-brain"></i>
-      <span>CogniFlow AI</span>
+      <span>LearnSprint AI</span>
     </div>
     <div class="landing-nav">
       <!-- Theme Toggle Button -->
@@ -165,7 +165,7 @@
     <section class="landing-hero fade-in">
       <h1 class="gradient-text">Learn Smarter, Not Harder</h1>
       <p>
-        Accelerate your learning journey with CogniFlow AI. We build adaptive, goal-oriented study schedules, track study streaks, and map precise assessment steps tailored to your level.
+        Accelerate your learning journey with LearnSprint AI. We build adaptive, goal-oriented study schedules, track study streaks, and map precise assessment steps tailored to your level.
       </p>
       <div class="cta-buttons">
         <a href="login.html" class="btn btn-primary cta-btn-lg" id="hero-cta-start"><i class="fas fa-rocket"></i> Get Started Free</a>
@@ -207,7 +207,7 @@
         <div class="footer-brand">
           <div class="footer-logo">
             <i class="fas fa-brain"></i>
-            <h3>CogniFlow AI</h3>
+            <h3>LearnSprint AI</h3>
           </div>
           <p class="footer-desc">Empowering students through organized study schedules and active recall diagnostics.</p>
         </div>
@@ -222,7 +222,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 CogniFlow AI. All rights reserved.</p>
+        <p>© 2026 LearnSprint AI. All rights reserved.</p>
         <p>Built using SOLID vanilla OOP principles.</p>
       </div>
     </div>
@@ -260,7 +260,7 @@
         themeToggleBtn.addEventListener('click', () => {
           document.body.classList.toggle('dark-theme');
           const isDarkNow = document.body.classList.contains('dark-theme');
-          localStorage.setItem('cogniflow_theme', isDarkNow ? 'dark' : 'light');
+          localStorage.setItem('LearnSprint_theme', isDarkNow ? 'dark' : 'light');
           syncThemeUI();
         });
       }
