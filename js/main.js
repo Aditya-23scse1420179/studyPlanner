@@ -82,12 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. Bind Logout Button Click Event
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn && typeof AuthService !== 'undefined') {
-    logoutBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      AuthService.logout();
+  // 6. Bind Logout Button Click Events (Desktop and Mobile)
+  const logoutButtons = document.querySelectorAll('#logout-btn, .mobile-logout-btn, .logout-btn-trigger');
+  if (logoutButtons.length > 0 && typeof AuthService !== 'undefined') {
+    logoutButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        AuthService.logout();
+      });
     });
   }
 });

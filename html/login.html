@@ -25,108 +25,148 @@
     <i class="fas fa-moon"></i>
   </button>
 
-  <div class="auth-container">
-    <div class="auth-logo">
-      <i class="fas fa-brain"></i>
-      <span>LearnSprint AI</span>
-    </div>
-
-    <!-- 1. LOGIN CARD -->
-    <div class="auth-card fade-in" id="login-card">
-      <h2>Sign in to LearnSprint AI</h2>
-      
-      <div class="auth-alert auth-alert-error" id="login-error"></div>
-      <div class="auth-alert auth-alert-success" id="login-success"></div>
-
-      <form id="login-form">
-        <div class="form-group">
-          <label for="login-email">Email address</label>
-          <input type="email" id="login-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+  <div class="login-split-card">
+    <!-- Left Pane: Interactive Login & Form Cards -->
+    <div class="auth-form-pane">
+      <div class="auth-container">
+        <div class="auth-logo">
+          <i class="fas fa-brain"></i>
+          <span>LearnSprint AI</span>
         </div>
-        
-        <div class="form-group">
-          <div class="form-group-flex">
-            <label for="login-password">Password</label>
-            <a href="#" class="forgot-password-link" id="show-forgot-btn">Forgot password?</a>
+
+        <!-- 1. LOGIN CARD -->
+        <div class="auth-card fade-in" id="login-card">
+          <h2>Sign in to LearnSprint AI</h2>
+          
+          <div class="auth-alert auth-alert-error" id="login-error"></div>
+          <div class="auth-alert auth-alert-success" id="login-success"></div>
+
+          <form id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email address</label>
+              <input type="email" id="login-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+            </div>
+            
+            <div class="form-group">
+              <div class="form-group-flex">
+                <label for="login-password">Password</label>
+                <a href="#" class="forgot-password-link" id="show-forgot-btn">Forgot password?</a>
+              </div>
+              <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+          </form>
+
+          <div class="auth-footer">
+            New to LearnSprint AI? <a href="#" id="show-signup-btn">Create an account</a>.
           </div>
-          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
         </div>
 
-        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Sign In</button>
-      </form>
+        <!-- 2. SIGNUP CARD -->
+        <div class="auth-card fade-in hidden" id="signup-card">
+          <h2>Create your account</h2>
+          
+          <div class="auth-alert auth-alert-error" id="signup-error"></div>
+          <div class="auth-alert auth-alert-success" id="signup-success"></div>
 
-      <div class="auth-footer">
-        New to LearnSprint AI? <a href="#" id="show-signup-btn">Create an account</a>.
+          <form id="signup-form">
+            <div class="form-group">
+              <label for="signup-name">Full name</label>
+              <input type="text" id="signup-name" class="form-control" placeholder="Aditya Pratap" required autocomplete="name">
+            </div>
+
+            <div class="form-group">
+              <label for="signup-email">Email address</label>
+              <input type="email" id="signup-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+            </div>
+            
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+              <label for="signup-confirm-password">Confirm Password</label>
+              <input type="password" id="signup-confirm-password" class="form-control" placeholder="••••••••" required autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-user-plus"></i> Create Account</button>
+          </form>
+
+          <div class="auth-footer">
+            Already have an account? <a href="#" id="show-login-btn">Sign in</a>.
+          </div>
+        </div>
+
+        <!-- 3. FORGOT PASSWORD CARD -->
+        <div class="auth-card fade-in hidden" id="forgot-card">
+          <h2>Reset your password</h2>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
+            Enter your email address and verify your new desired password.
+          </p>
+          
+          <div class="auth-alert auth-alert-error" id="forgot-error"></div>
+          <div class="auth-alert auth-alert-success" id="forgot-success"></div>
+
+          <form id="forgot-form">
+            <div class="form-group">
+              <label for="forgot-email">Email address</label>
+              <input type="email" id="forgot-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+              <label for="forgot-new-password">New Password</label>
+              <input type="password" id="forgot-new-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-key"></i> Reset Password</button>
+          </form>
+
+          <div class="auth-footer">
+            Remember your details? <a href="#" id="show-login-from-forgot-btn">Back to sign in</a>.
+          </div>
+        </div>
+
+        <div class="auth-credit">
+          <p>Developed By Aditya & Akshat</p>
+        </div>
       </div>
     </div>
 
-    <!-- 2. SIGNUP CARD -->
-    <div class="auth-card fade-in hidden" id="signup-card">
-      <h2>Create your account</h2>
-      
-      <div class="auth-alert auth-alert-error" id="signup-error"></div>
-      <div class="auth-alert auth-alert-success" id="signup-success"></div>
-
-      <form id="signup-form">
-        <div class="form-group">
-          <label for="signup-name">Full name</label>
-          <input type="text" id="signup-name" class="form-control" placeholder="Aditya Pratap" required autocomplete="name">
+    <!-- Right Pane: Candle CSS Animation -->
+    <div class="auth-animation-pane">
+      <div class="wrapper">
+        <div class="candles">
+          <div class="light__wave"></div>
+          <div class="candle1">
+            <div class="candle1__body">
+              <div class="candle1__eyes">
+                <span class="candle1__eyes-one"></span>
+                <span class="candle1__eyes-two"></span>
+              </div>
+              <div class="candle1__mouth"></div>
+            </div>
+            <div class="candle1__stick"></div>
+          </div>
+          
+          <div class="candle2">
+            <div class="candle2__body">
+              <div class="candle2__eyes">
+                <div class="candle2__eyes-one"></div>
+                <div class="candle2__eyes-two"></div>
+              </div>
+            </div>
+            <div class="candle2__stick"></div>
+          </div>
+          <div class="candle2__fire"></div>
+          <div class="sparkles-one"></div>
+          <div class="sparkles-two"></div>
+          <div class="candle__smoke-one"></div>
+          <div class="candle__smoke-two"></div>
         </div>
-
-        <div class="form-group">
-          <label for="signup-email">Email address</label>
-          <input type="email" id="signup-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
-        </div>
-        
-        <div class="form-group">
-          <label for="signup-password">Password</label>
-          <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
-        </div>
-
-        <div class="form-group">
-          <label for="signup-confirm-password">Confirm Password</label>
-          <input type="password" id="signup-confirm-password" class="form-control" placeholder="••••••••" required autocomplete="new-password">
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-user-plus"></i> Create Account</button>
-      </form>
-
-      <div class="auth-footer">
-        Already have an account? <a href="#" id="show-login-btn">Sign in</a>.
+        <div class="floor"></div>
       </div>
-    </div>
-
-    <!-- 3. FORGOT PASSWORD CARD -->
-    <div class="auth-card fade-in hidden" id="forgot-card">
-      <h2>Reset your password</h2>
-      <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
-        Enter your email address and verify your new desired password.
-      </p>
-      
-      <div class="auth-alert auth-alert-error" id="forgot-error"></div>
-      <div class="auth-alert auth-alert-success" id="forgot-success"></div>
-
-      <form id="forgot-form">
-        <div class="form-group">
-          <label for="forgot-email">Email address</label>
-          <input type="email" id="forgot-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
-        </div>
-
-        <div class="form-group">
-          <label for="forgot-new-password">New Password</label>
-          <input type="password" id="forgot-new-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-key"></i> Reset Password</button>
-      </form>
-
-      <div class="auth-footer">
-        Remember your details? <a href="#" id="show-login-from-forgot-btn">Back to sign in</a>.
-      </div>
-    </div>
-
-    <div class="auth-credit">
-      <p>Developed By Aditya Pratap Singh & Akshat</p>
     </div>
   </div>
 

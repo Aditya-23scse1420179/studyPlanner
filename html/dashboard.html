@@ -95,8 +95,13 @@
         <span style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
           <i class="fas fa-brain" style="color: var(--accent-blue);"></i> LearnSprint AI
         </span>
-        <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem;">
-          <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="topbar-streak" style="padding: 2px 8px; font-size: 0.72rem; margin: 0;">
+            <i class="fas fa-fire"></i> <span id="mobile-streak-val">0</span>d
+          </div>
+          <button class="toggle-sidebar-btn mobile-logout-btn" title="Logout" style="width: 28px; height: 28px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; background: none; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); color: var(--text-secondary); cursor: pointer;">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
         </div>
       </div>
 
@@ -486,6 +491,45 @@
           </div>
         </section>
 
+        <!-- INTERACTIVE MULTI-DOMAIN ALGORITHM VISUALIZER -->
+        <section class="visualizer-section card" style="margin-bottom: 32px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-project-diagram" style="color: var(--accent-blue);"></i> Multi-Domain Algorithm Visualizer
+              </h3>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 4px 0 0 0;">
+                Interact with core concepts from DSA, Web Development, Databases, and Machine Learning.
+              </p>
+            </div>
+            <div class="visualizer-tabs" style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-sm active-tab" data-domain="dsa" style="font-size: 0.8rem; padding: 4px 10px;">DSA (Sort)</button>
+              <button class="btn btn-secondary btn-sm" data-domain="webdev" style="font-size: 0.8rem; padding: 4px 10px;">Web Dev (Bubbling)</button>
+              <button class="btn btn-secondary btn-sm" data-domain="sql" style="font-size: 0.8rem; padding: 4px 10px;">SQL (Joins)</button>
+              <button class="btn btn-secondary btn-sm" data-domain="ml" style="font-size: 0.8rem; padding: 4px 10px;">ML (K-Means)</button>
+            </div>
+          </div>
+
+          <!-- Visualizer Display Box -->
+          <div class="visualizer-container" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 20px; min-height: 280px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto;">
+            <div id="visualizer-display-area" style="width: 100%; display: flex; justify-content: center; align-items: center; flex-grow: 1;">
+              <!-- Target content dynamically loaded here -->
+            </div>
+          </div>
+
+          <!-- Visualizer Controls & Legend -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; flex-wrap: wrap; gap: 12px;">
+            <div class="visualizer-controls" style="display: flex; gap: 8px;">
+              <button class="btn btn-primary btn-sm" id="visualizer-btn-play"><i class="fas fa-play"></i> Run Visualizer</button>
+              <button class="btn btn-secondary btn-sm" id="visualizer-btn-step"><i class="fas fa-step-forward"></i> Next Step</button>
+              <button class="btn btn-danger btn-sm" id="visualizer-btn-reset" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-undo"></i> Reset</button>
+            </div>
+            <div id="visualizer-step-description" style="font-size: 0.85rem; color: var(--text-secondary); max-width: 450px; text-align: right;">
+              Select a domain and click "Run Visualizer" to animate.
+            </div>
+          </div>
+        </section>
+
         <!-- DASHBOARD DETAILS GRID (PROGRESS + INTELLIGENCE CIRCLE) -->
         <div class="dashboard-grid">
           
@@ -714,7 +758,7 @@
             </div>
             <div class="footer-dev">
               <h4>Developed By</h4>
-              <p>Aditya Pratap Singh & Akshat</p>
+              <p>Aditya & Akshat</p>
             </div>
             <div class="footer-links">
               <a href="https://github.com/Aditya-23scse1420179" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>

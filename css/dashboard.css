@@ -588,3 +588,43 @@
     transform: translateX(-50%);
   }
 }
+
+/* Algorithm Visualizer UI styles */
+.visualizer-tabs button {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.visualizer-tabs button:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.visualizer-tabs button.active-tab {
+  background-color: var(--accent-blue-light);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  font-weight: 600;
+}
+
+/* SQL tables styling in visualizer */
+.visualizer-container table th {
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  padding: 4px;
+}
+
+.visualizer-container table td {
+  color: var(--text-secondary);
+  padding: 4px;
+  font-size: 0.72rem;
+}
+
+/* Make sure DOM event highlight box styles transition nicely */
+#wd-window, #wd-document, #wd-body, #wd-container, #wd-button {
+  transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}

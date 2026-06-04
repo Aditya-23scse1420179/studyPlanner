@@ -351,6 +351,9 @@ class LearnAIController {
     if (genAssessmentBtn) {
       genAssessmentBtn.addEventListener('click', () => this.handleGenerateClick());
     }
+
+    // 4. Render Attempted Quizzes history
+    this.renderQuizHistory();
   }
 
   checkUrlParams() {
@@ -542,6 +545,24 @@ class LearnAIController {
       AuthService.syncSession(user);
     }
 
+    // Save attempt to global history list in Local Storage
+    try {
+      const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+      const attempt = {
+        skill: this.activeSkill,
+        score: correctCount,
+        level: level,
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      };
+      history.unshift(attempt); // Add to the top of the history list
+      localStorage.setItem('LearnSprint_quiz_history', JSON.stringify(history));
+    } catch(err) {
+      console.error("Local quiz history write failed", err);
+    }
+
+    // Refresh history cards list
+    this.renderQuizHistory();
+
     // Render results view
     const quizCard = document.getElementById('quiz-card');
     const resultsCard = document.getElementById('results-card');
@@ -563,6 +584,73 @@ class LearnAIController {
       levelBadge.className = `level-badge-large badge ${badgeClass}`;
       levelBadge.textContent = level;
     }
+  }
+
+  renderQuizHistory() {
+    const listContainer = document.getElementById('quiz-history-list');
+    if (!listContainer) return;
+
+    let history = [];
+    try {
+      history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+    } catch(err) {
+      console.error("Failed to read quiz history", err);
+    }
+
+    if (history.length === 0) {
+      listContainer.innerHTML = `
+        <div class="empty-state" style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border: 1px dashed var(--border-color); border-radius: var(--border-radius-sm);">
+          <i class="fas fa-folder-open" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: var(--text-muted);"></i>
+          No quiz evaluations completed yet. Start an assessment to see your topic understanding.
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = '';
+    history.forEach(attempt => {
+      let badgeClass = "badge-danger";
+      let understandingText = "";
+      const accuracy = attempt.score * 10;
+
+      if (attempt.level === "Advanced") {
+        badgeClass = "badge-success";
+        understandingText = `Advanced (${accuracy}% understanding) - Deep knowledge of core components. Excellent grasp of concepts.`;
+      } else if (attempt.level === "Intermediate") {
+        badgeClass = "badge-warning";
+        understandingText = `Intermediate (${accuracy}% understanding) - Good syntax skills, but requires minor review on advanced patterns.`;
+      } else {
+        badgeClass = "badge-danger";
+        understandingText = `Beginner (${accuracy}% understanding) - Foundational gaps detected. Focus on baseline guides and tutorials.`;
+      }
+
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.justify = 'space-between';
+      row.style.alignItems = 'center';
+      row.style.padding = '12px 16px';
+      row.style.border = '1px solid var(--border-color)';
+      row.style.borderRadius = 'var(--border-radius-sm)';
+      row.style.backgroundColor = 'var(--bg-secondary)';
+      row.style.fontSize = '0.9rem';
+
+      row.innerHTML = `
+        <div style="flex-grow: 1; padding-right: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <strong style="color: var(--text-primary); font-size: 0.95rem;">${this.escapeHTML(attempt.skill)}</strong>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">${attempt.date}</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">
+            ${understandingText}
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
+          <span class="badge ${badgeClass}" style="font-size: 0.75rem; text-transform: uppercase;">${attempt.level}</span>
+          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">${attempt.score} / 10</span>
+        </div>
+      `;
+      listContainer.appendChild(row);
+    });
   }
 
   escapeHTML(str) {

@@ -131,7 +131,7 @@ project/
 
 ### Developers
 
-* Aditya Pratap Singh
+* Aditya
 * Akshat
 
 ---
