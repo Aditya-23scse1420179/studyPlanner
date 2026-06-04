@@ -99,6 +99,31 @@
           </div>
         </div>
 
+        <!-- 2.5. OTP VERIFICATION CARD -->
+        <div class="auth-card fade-in hidden" id="otp-card">
+          <h2>Verify Your Email</h2>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
+            We've sent a 6-digit verification code to <strong id="otp-email-display">your email</strong>.
+          </p>
+          
+          <div class="auth-alert auth-alert-error" id="otp-error"></div>
+          <div class="auth-alert auth-alert-success" id="otp-success"></div>
+
+          <form id="otp-form">
+            <div class="form-group">
+              <label for="otp-code">Verification Code (OTP)</label>
+              <input type="text" id="otp-code" class="form-control" placeholder="123456" maxlength="6" required autocomplete="one-time-code">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check-circle"></i> Verify & Sign In</button>
+          </form>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 0.8rem;">
+            <a href="#" id="resend-otp-btn" style="color: var(--accent-blue);">Resend OTP</a>
+            <a href="#" id="show-signup-from-otp-btn" style="color: var(--text-secondary);">Back to sign up</a>
+          </div>
+        </div>
+
         <!-- 3. FORGOT PASSWORD CARD -->
         <div class="auth-card fade-in hidden" id="forgot-card">
           <h2>Reset your password</h2>
@@ -185,16 +210,20 @@
       // 2. Element References
       const loginCard = document.getElementById('login-card');
       const signupCard = document.getElementById('signup-card');
+      const otpCard = document.getElementById('otp-card');
       const forgotCard = document.getElementById('forgot-card');
 
       const showSignupBtn = document.getElementById('show-signup-btn');
       const showLoginBtn = document.getElementById('show-login-btn');
       const showForgotBtn = document.getElementById('show-forgot-btn');
       const showLoginFromForgotBtn = document.getElementById('show-login-from-forgot-btn');
+      const showSignupFromOtpBtn = document.getElementById('show-signup-from-otp-btn');
+      const resendOtpBtn = document.getElementById('resend-otp-btn');
 
       // Forms
       const loginForm = document.getElementById('login-form');
       const signupForm = document.getElementById('signup-form');
+      const otpForm = document.getElementById('otp-form');
       const forgotForm = document.getElementById('forgot-form');
 
       // Alerts
@@ -202,12 +231,17 @@
       const loginSuccess = document.getElementById('login-success');
       const signupError = document.getElementById('signup-error');
       const signupSuccess = document.getElementById('signup-success');
+      const otpError = document.getElementById('otp-error');
+      const otpSuccess = document.getElementById('otp-success');
       const forgotError = document.getElementById('forgot-error');
       const forgotSuccess = document.getElementById('forgot-success');
 
+      // Session State
+      let pendingOtpEmail = '';
+
       // Helper to clear alerts
       function clearAlerts() {
-        const alerts = [loginError, loginSuccess, signupError, signupSuccess, forgotError, forgotSuccess];
+        const alerts = [loginError, loginSuccess, signupError, signupSuccess, otpError, otpSuccess, forgotError, forgotSuccess];
         alerts.forEach(a => {
           if (a) {
             a.textContent = '';
@@ -245,16 +279,32 @@
         loginCard.classList.remove('hidden');
       });
 
+      showSignupFromOtpBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlerts();
+        otpCard.classList.add('hidden');
+        signupCard.classList.remove('hidden');
+      });
+
       // 4. Form Actions
       // Sign In Form Submission
-      loginForm.addEventListener('submit', (e) => {
+      loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearAlerts();
 
         const email = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-password').value;
 
-        const res = AuthService.login(email, password);
+        // Show spinner / loading state
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        const origContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+
+        const res = await AuthService.login(email, password);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origContent;
+
         if (res.success) {
           loginSuccess.textContent = "Successfully authenticated! Accessing your planner...";
           loginSuccess.classList.add('show');
@@ -267,8 +317,8 @@
         }
       });
 
-      // Sign Up Form Submission
-      signupForm.addEventListener('submit', (e) => {
+      // Sign Up Form Submission (First time user - triggers OTP)
+      signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearAlerts();
 
@@ -289,21 +339,100 @@
           return;
         }
 
-        const res = AuthService.signup(name, email, password);
+        // Show spinner / loading state
+        const submitBtn = signupForm.querySelector('button[type="submit"]');
+        const origContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+        const res = await AuthService.signup(name, email, password);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origContent;
+
         if (res.success) {
-          signupSuccess.textContent = "Account registered successfully! Loading dashboard...";
+          pendingOtpEmail = email;
+          document.getElementById('otp-email-display').textContent = email;
+          
+          signupSuccess.textContent = "Account initialized! OTP verification code sent to your email.";
           signupSuccess.classList.add('show');
+          
           setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 1200);
+            signupCard.classList.add('hidden');
+            otpCard.classList.remove('hidden');
+            clearAlerts();
+          }, 1500);
         } else {
           signupError.textContent = res.message;
           signupError.classList.add('show');
         }
       });
 
-      // Reset Password Form Submission
-      forgotForm.addEventListener('submit', (e) => {
+      // OTP Verification Form Submission
+      otpForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlerts();
+
+        const otp = document.getElementById('otp-code').value.trim();
+        if (!pendingOtpEmail) {
+          otpError.textContent = "Email reference missing. Please try signing up again.";
+          otpError.classList.add('show');
+          return;
+        }
+
+        // Show spinner / loading state
+        const submitBtn = otpForm.querySelector('button[type="submit"]');
+        const origContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+        const res = await AuthService.verifyOtp(pendingOtpEmail, otp);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origContent;
+
+        if (res.success) {
+          otpSuccess.textContent = "Email successfully verified! Redirecting to dashboard...";
+          otpSuccess.classList.add('show');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1200);
+        } else {
+          otpError.textContent = res.message;
+          otpError.classList.add('show');
+        }
+      });
+
+      // Resend OTP Click Event
+      resendOtpBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        clearAlerts();
+
+        if (!pendingOtpEmail) {
+          otpError.textContent = "Email reference missing. Please register again.";
+          otpError.classList.add('show');
+          return;
+        }
+
+        resendOtpBtn.style.pointerEvents = 'none';
+        resendOtpBtn.style.opacity = '0.5';
+        resendOtpBtn.textContent = 'Resending...';
+
+        const res = await AuthService.resendOtp(pendingOtpEmail);
+        
+        resendOtpBtn.style.pointerEvents = 'auto';
+        resendOtpBtn.style.opacity = '1';
+        resendOtpBtn.textContent = 'Resend OTP';
+
+        if (res.success) {
+          otpSuccess.textContent = "A new verification code has been dispatched to your email.";
+          otpSuccess.classList.add('show');
+        } else {
+          otpError.textContent = res.message || "Failed to resend verification code.";
+          otpError.classList.add('show');
+        }
+      });
+
+      // Reset Password Form Submission (Simulation)
+      forgotForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearAlerts();
 
@@ -316,20 +445,49 @@
           return;
         }
 
-        const res = AuthService.resetPassword(email, newPassword);
+        const submitBtn = forgotForm.querySelector('button[type="submit"]');
+        const origContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        const res = await AuthService.resetPassword(email, newPassword);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origContent;
+
         if (res.success) {
-          forgotSuccess.textContent = "Password reset completed! Redirecting back to login...";
+          forgotSuccess.textContent = res.message;
           forgotSuccess.classList.add('show');
           forgotForm.reset();
           setTimeout(() => {
             forgotCard.classList.add('hidden');
             loginCard.classList.remove('hidden');
             clearAlerts();
-          }, 2000);
+          }, 2500);
         } else {
           forgotError.textContent = res.message;
           forgotError.classList.add('show');
         }
+      });
+
+      // 5. Typing Darken Detection
+      const allAuthCards = document.querySelectorAll('.auth-card');
+      allAuthCards.forEach(card => {
+        const cardInputs = card.querySelectorAll('.form-control');
+        
+        const updateTypingState = () => {
+          const hasVal = Array.from(cardInputs).some(input => input.value.length > 0);
+          if (hasVal) {
+            card.classList.add('typing');
+          } else {
+            card.classList.remove('typing');
+          }
+        };
+
+        cardInputs.forEach(input => {
+          input.addEventListener('input', updateTypingState);
+          input.addEventListener('change', updateTypingState);
+          input.addEventListener('blur', updateTypingState);
+        });
       });
 
       // Theme Toggle Initialization

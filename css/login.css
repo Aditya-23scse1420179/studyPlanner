@@ -5,7 +5,11 @@
  */
 
 body.login-body {
-  background-color: var(--bg-secondary);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../login_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,13 +25,20 @@ body.login-body {
   width: 100%;
   max-width: 860px;
   min-height: 580px;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   position: relative;
-  transition: background-color 0.25s ease;
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .login-split-card {
+  background: rgba(13, 17, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Left Pane: Authentic Forms */
@@ -37,7 +48,7 @@ body.login-body {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background-color: var(--bg-primary);
+  background-color: transparent;
 }
 
 .auth-container {
@@ -65,11 +76,61 @@ body.login-body {
 
 /* Auth Card Styling */
 .auth-card {
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--border-radius-md);
   padding: 24px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .auth-card {
+  background: rgba(21, 26, 35, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Typing state overlays */
+.auth-card.typing {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+body.dark-theme .auth-card.typing {
+  background: rgba(0, 0, 0, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.auth-card.typing h2,
+.auth-card.typing label,
+.auth-card.typing .auth-footer,
+.auth-card.typing p,
+.auth-card.typing .form-group-flex label {
+  color: #ffffff !important;
+}
+
+.auth-card.typing .form-control {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.auth-card.typing .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Pause animation by default */
+.auth-animation-pane,
+.auth-animation-pane * {
+  animation-play-state: paused !important;
+}
+
+/* Play animation only on hover */
+.login-split-card:hover .auth-animation-pane,
+.login-split-card:hover .auth-animation-pane * {
+  animation-play-state: running !important;
 }
 
 .auth-card h2 {
