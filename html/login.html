@@ -127,29 +127,42 @@
         <!-- 3. FORGOT PASSWORD CARD -->
         <div class="auth-card fade-in hidden" id="forgot-card">
           <h2>Reset your password</h2>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
-            Enter your email address and verify your new desired password.
+          <p id="forgot-instruction" style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
+            Enter your registered email address to receive a verification OTP.
           </p>
           
           <div class="auth-alert auth-alert-error" id="forgot-error"></div>
           <div class="auth-alert auth-alert-success" id="forgot-success"></div>
 
           <form id="forgot-form">
-            <div class="form-group">
+            <!-- Phase 1: Enter Email -->
+            <div class="form-group" id="forgot-email-group">
               <label for="forgot-email">Email address</label>
               <input type="email" id="forgot-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
             </div>
 
-            <div class="form-group">
-              <label for="forgot-new-password">New Password</label>
-              <input type="password" id="forgot-new-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+            <!-- Phase 2: Enter OTP and New Password (hidden by default) -->
+            <div id="forgot-otp-phase" style="display: none; flex-direction: column; gap: 16px; margin-bottom: 16px;">
+              <div class="form-group">
+                <label for="forgot-otp">Verification Code (OTP)</label>
+                <input type="text" id="forgot-otp" class="form-control" placeholder="123456" maxlength="6" autocomplete="one-time-code">
+              </div>
+
+              <div class="form-group">
+                <label for="forgot-new-password">New Password</label>
+                <input type="password" id="forgot-new-password" class="form-control" placeholder="At least 6 characters" autocomplete="new-password">
+              </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-key"></i> Reset Password</button>
+            <!-- Action buttons -->
+            <button type="submit" id="forgot-submit-btn" class="btn btn-primary btn-full">
+              <i class="fas fa-paper-plane"></i> Send OTP
+            </button>
           </form>
 
-          <div class="auth-footer">
-            Remember your details? <a href="#" id="show-login-from-forgot-btn">Back to sign in</a>.
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 0.8rem;">
+            <a href="#" id="forgot-back-btn" style="display: none; color: var(--text-secondary);"><i class="fas fa-arrow-left"></i> Back to email</a>
+            <a href="#" id="show-login-from-forgot-btn" style="color: var(--accent-blue);">Back to sign in</a>
           </div>
         </div>
 
@@ -220,6 +233,17 @@
       const showSignupFromOtpBtn = document.getElementById('show-signup-from-otp-btn');
       const resendOtpBtn = document.getElementById('resend-otp-btn');
 
+      // Forgot Password Elements
+      const forgotEmailGroup = document.getElementById('forgot-email-group');
+      const forgotOtpPhase = document.getElementById('forgot-otp-phase');
+      const forgotSubmitBtn = document.getElementById('forgot-submit-btn');
+      const forgotBackBtn = document.getElementById('forgot-back-btn');
+      const forgotInstruction = document.getElementById('forgot-instruction');
+      const forgotEmailInput = document.getElementById('forgot-email');
+      const forgotOtpInput = document.getElementById('forgot-otp');
+      const forgotNewPasswordInput = document.getElementById('forgot-new-password');
+      let forgotOtpSent = false;
+
       // Forms
       const loginForm = document.getElementById('login-form');
       const signupForm = document.getElementById('signup-form');
@@ -250,6 +274,20 @@
         });
       }
 
+      function resetForgotState() {
+        forgotOtpSent = false;
+        forgotEmailInput.disabled = false;
+        forgotEmailInput.value = '';
+        forgotOtpInput.value = '';
+        forgotOtpInput.required = false;
+        forgotNewPasswordInput.value = '';
+        forgotNewPasswordInput.required = false;
+        forgotOtpPhase.style.display = 'none';
+        forgotBackBtn.style.display = 'none';
+        forgotSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+        forgotInstruction.textContent = 'Enter your registered email address to receive a verification OTP.';
+      }
+
       // 3. Card Switching Click Events
       showSignupBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -268,6 +306,7 @@
       showForgotBtn.addEventListener('click', (e) => {
         e.preventDefault();
         clearAlerts();
+        resetForgotState();
         loginCard.classList.add('hidden');
         forgotCard.classList.remove('hidden');
       });
@@ -275,6 +314,7 @@
       showLoginFromForgotBtn.addEventListener('click', (e) => {
         e.preventDefault();
         clearAlerts();
+        resetForgotState();
         forgotCard.classList.add('hidden');
         loginCard.classList.remove('hidden');
       });
@@ -284,6 +324,12 @@
         clearAlerts();
         otpCard.classList.add('hidden');
         signupCard.classList.remove('hidden');
+      });
+
+      forgotBackBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlerts();
+        resetForgotState();
       });
 
       // 4. Form Actions
@@ -431,41 +477,80 @@
         }
       });
 
-      // Reset Password Form Submission (Simulation)
+      // Reset Password Form Submission
       forgotForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearAlerts();
 
-        const email = document.getElementById('forgot-email').value.trim();
-        const newPassword = document.getElementById('forgot-new-password').value;
+        const email = forgotEmailInput.value.trim();
 
-        if (newPassword.length < 6) {
-          forgotError.textContent = "New password must be at least 6 characters.";
-          forgotError.classList.add('show');
-          return;
-        }
+        if (!forgotOtpSent) {
+          // Phase 1: Send OTP to email
+          forgotSubmitBtn.disabled = true;
+          forgotSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatched...';
 
-        const submitBtn = forgotForm.querySelector('button[type="submit"]');
-        const origContent = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+          const res = await AuthService.resendOtp(email);
+          forgotSubmitBtn.disabled = false;
 
-        const res = await AuthService.resetPassword(email, newPassword);
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = origContent;
-
-        if (res.success) {
-          forgotSuccess.textContent = res.message;
-          forgotSuccess.classList.add('show');
-          forgotForm.reset();
-          setTimeout(() => {
-            forgotCard.classList.add('hidden');
-            loginCard.classList.remove('hidden');
-            clearAlerts();
-          }, 2500);
+          if (res.success) {
+            forgotOtpSent = true;
+            forgotEmailInput.disabled = true;
+            forgotOtpPhase.style.display = 'flex';
+            forgotBackBtn.style.display = 'inline-block';
+            forgotOtpInput.required = true;
+            forgotNewPasswordInput.required = true;
+            forgotSubmitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify & Update Password';
+            forgotInstruction.textContent = 'Enter the 6-digit OTP code sent to your email and your new desired password.';
+            
+            forgotSuccess.textContent = "Verification OTP has been sent to your email!";
+            forgotSuccess.classList.add('show');
+          } else {
+            forgotSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+            forgotError.textContent = res.message || "Failed to send verification OTP.";
+            forgotError.classList.add('show');
+          }
         } else {
-          forgotError.textContent = res.message;
-          forgotError.classList.add('show');
+          // Phase 2: Enter OTP + New Password and verify
+          const otp = forgotOtpInput.value.trim();
+          const newPassword = forgotNewPasswordInput.value;
+
+          if (newPassword.length < 6) {
+            forgotError.textContent = "New password must be at least 6 characters.";
+            forgotError.classList.add('show');
+            return;
+          }
+
+          forgotSubmitBtn.disabled = true;
+          forgotSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+          // 1. Verify OTP on the backend
+          const verifyRes = await AuthService.verifyOtp(email, otp);
+          if (verifyRes.success) {
+            // OTP verified! Since verification yields valid session tokens and logs user in,
+            // we can invoke the password update endpoint
+            try {
+              if (typeof ApiService !== 'undefined') {
+                await ApiService.updateProfile({ password: newPassword });
+              }
+            } catch (err) {
+              console.error("Failed to push profile update for password", err);
+            }
+
+            await AuthService.resetPassword(email, newPassword);
+
+            forgotSuccess.textContent = "OTP verified and password updated! Redirecting to dashboard...";
+            forgotSuccess.classList.add('show');
+            forgotSubmitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Complete';
+            
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 1500);
+          } else {
+            forgotSubmitBtn.disabled = false;
+            forgotSubmitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify & Update Password';
+            forgotError.textContent = verifyRes.message || "Invalid OTP code. Please try again.";
+            forgotError.classList.add('show');
+          }
         }
       });
 

@@ -359,14 +359,20 @@ class LearnAIController {
   checkUrlParams() {
     const params = new URLSearchParams(window.location.search);
     const searchSkill = params.get('search');
+    const autoGen = params.get('auto') === 'true';
     const skillInput = document.getElementById('skill-input');
     
     if (searchSkill && skillInput) {
       skillInput.value = searchSkill;
+      if (autoGen) {
+        setTimeout(() => {
+          this.handleGenerateClick();
+        }, 150);
+      }
     }
   }
 
-  handleGenerateClick() {
+  async handleGenerateClick() {
     const skillInput = document.getElementById('skill-input');
     const timeSelect = document.getElementById('time-select');
     const hoursSelect = document.getElementById('hours-select');
@@ -380,38 +386,12 @@ class LearnAIController {
     this.timeLimit = timeSelect ? timeSelect.value : "60";
     this.dailyHours = hoursSelect ? hoursSelect.value : "2";
 
-    // Load MCQ Database
-    this.loadQuizQuestions();
+    // Load MCQ Database from API or Local fallback
+    await this.loadQuizQuestions();
   }
 
-  loadQuizQuestions() {
-    // Standardize key check
-    const normalizedKey = this.activeSkill.toLowerCase().trim();
-    
-    let dbKey = "javascript"; // Default fallback
-    if (QUESTION_BANK[normalizedKey]) {
-      dbKey = normalizedKey;
-    } else if (normalizedKey.includes("dsa") || normalizedKey.includes("data structure") || normalizedKey.includes("algorithm")) {
-      dbKey = "dsa";
-    } else if (normalizedKey.includes("html")) {
-      dbKey = "html";
-    } else if (normalizedKey.includes("css")) {
-      dbKey = "css";
-    } else if (normalizedKey.includes("js") || normalizedKey.includes("javascript")) {
-      dbKey = "javascript";
-    } else if (normalizedKey.includes("sql") || normalizedKey.includes("database")) {
-      dbKey = "sql";
-    } else if (normalizedKey.includes("machine learning") || normalizedKey.includes("ml") || normalizedKey.includes("ai")) {
-      dbKey = "machine learning";
-    }
-
-    // Shallow copy the 10 questions
-    this.currentQuestions = JSON.parse(JSON.stringify(QUESTION_BANK[dbKey]));
-    this.currentQIndex = 0;
-    this.userAnswers = [];
-    this.selectedOptionIndex = null;
-
-    // Transition forms
+  async loadQuizQuestions() {
+    // Transition forms to show quiz card
     const learnForm = document.getElementById('learn-form-card');
     const quizCard = document.getElementById('quiz-card');
 
@@ -420,6 +400,91 @@ class LearnAIController {
       quizCard.classList.remove('hidden');
       quizCard.style.display = 'block';
     }
+
+    // Show loading status inside the quiz card
+    const qTitle = document.getElementById('quiz-title');
+    const qText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-list');
+
+    if (qTitle) qTitle.textContent = `Skill Evaluation: ${this.activeSkill}`;
+    if (qText) qText.textContent = "Connecting to LearnSprint Database...";
+    if (optionsContainer) {
+      optionsContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; color: var(--text-secondary);">
+          <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-blue); margin-bottom: 16px;"></i>
+          <span>Generating custom quiz questions from database...</span>
+        </div>
+      `;
+    }
+
+    // Disable action button during load
+    const actionBtn = document.getElementById('quiz-action-btn');
+    if (actionBtn) {
+      actionBtn.setAttribute('disabled', 'true');
+      actionBtn.innerHTML = `Loading...`;
+    }
+
+    try {
+      if (typeof ApiService !== 'undefined' && AuthService.isAuthenticated()) {
+        console.log("Fetching questions from backend for:", this.activeSkill);
+        const responseData = await ApiService.generateQuiz(this.activeSkill);
+        
+        let questions = [];
+        if (responseData && responseData.questions) {
+          questions = responseData.questions;
+        } else if (responseData && Array.isArray(responseData)) {
+          questions = responseData;
+        } else if (responseData && responseData.data && responseData.data.questions) {
+          questions = responseData.data.questions;
+        } else if (responseData && responseData.data && Array.isArray(responseData.data)) {
+          questions = responseData.data;
+        }
+
+        if (questions && questions.length > 0) {
+          this.currentQuestions = questions.map((qObj, index) => {
+            return {
+              id: qObj.id || qObj.questionId || `q${index + 1}`,
+              q: qObj.text || qObj.question || qObj.q || "",
+              o: qObj.options || qObj.o || [],
+              a: qObj.correctAnswerIndex !== undefined ? qObj.correctAnswerIndex : 0
+            };
+          });
+          this.quizId = responseData.quizId || responseData.id || null;
+        } else {
+          throw new Error("No questions returned from backend API");
+        }
+      } else {
+        throw new Error("Not authenticated / offline");
+      }
+    } catch (apiError) {
+      console.warn("Backend generateQuiz failed. Falling back to local offline QUESTION_BANK.", apiError);
+      
+      // Standardize key for fallback
+      const normalizedKey = this.activeSkill.toLowerCase().trim();
+      let dbKey = "javascript"; // Default fallback
+      if (QUESTION_BANK[normalizedKey]) {
+        dbKey = normalizedKey;
+      } else if (normalizedKey.includes("dsa") || normalizedKey.includes("data structure") || normalizedKey.includes("algorithm")) {
+        dbKey = "dsa";
+      } else if (normalizedKey.includes("html")) {
+        dbKey = "html";
+      } else if (normalizedKey.includes("css")) {
+        dbKey = "css";
+      } else if (normalizedKey.includes("js") || normalizedKey.includes("javascript")) {
+        dbKey = "javascript";
+      } else if (normalizedKey.includes("sql") || normalizedKey.includes("database")) {
+        dbKey = "sql";
+      } else if (normalizedKey.includes("machine learning") || normalizedKey.includes("ml") || normalizedKey.includes("ai")) {
+        dbKey = "machine learning";
+      }
+
+      this.currentQuestions = JSON.parse(JSON.stringify(QUESTION_BANK[dbKey]));
+      this.quizId = null;
+    }
+
+    this.currentQIndex = 0;
+    this.userAnswers = [];
+    this.selectedOptionIndex = null;
 
     // Render first question
     this.renderQuestion();
@@ -508,7 +573,120 @@ class LearnAIController {
     }
   }
 
-  gradeQuiz() {
+  async gradeQuiz() {
+    // If we have a backend quizId, submit it to the backend for grading
+    if (typeof ApiService !== 'undefined' && AuthService.isAuthenticated() && this.quizId) {
+      try {
+        const formattedAnswers = this.currentQuestions.map((q, idx) => {
+          return {
+            questionId: q.id,
+            selectedAnswer: q.o[this.userAnswers[idx]] // text of selected option
+          };
+        });
+
+        // Show loading/grading state
+        const quizCard = document.getElementById('quiz-card');
+        const resultsCard = document.getElementById('results-card');
+        
+        if (quizCard) {
+          const qText = document.getElementById('question-text');
+          if (qText) qText.textContent = "AI grading engine is evaluating your answers...";
+          const optionsContainer = document.getElementById('options-list');
+          if (optionsContainer) {
+            optionsContainer.innerHTML = `
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; color: var(--text-secondary);">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-blue); margin-bottom: 16px;"></i>
+                <span>Analyzing responses...</span>
+              </div>
+            `;
+          }
+        }
+
+        const submitRes = await ApiService.submitAssessment(this.quizId, formattedAnswers);
+        console.log("Assessment submit response:", submitRes);
+
+        let correctCount = 0;
+        let level = "Beginner";
+        let badgeClass = "badge-danger";
+
+        if (submitRes) {
+          // Backend returns score (out of 10 or percentage) and performanceClass/level
+          const score = submitRes.score !== undefined ? submitRes.score : 0;
+          correctCount = score > 10 ? Math.round(score / 10) : score;
+          
+          level = submitRes.performanceClass || submitRes.level || "Beginner";
+          if (level.toLowerCase().includes("advanced") || level.toLowerCase() === "advanced") {
+            level = "Advanced";
+            badgeClass = "badge-success";
+          } else if (level.toLowerCase().includes("intermediate") || level.toLowerCase() === "intermediate") {
+            level = "Intermediate";
+            badgeClass = "badge-warning";
+          } else {
+            level = "Beginner";
+            badgeClass = "badge-danger";
+          }
+        }
+
+        // Sync stats
+        const user = this.sessionUser;
+        user.skill = this.activeSkill;
+        user.score = correctCount;
+        user.level = level;
+        user.streak = Math.max(1, (user.streak || 0) + 1);
+        user.hours = Math.max(2, (user.hours || 0) + 2);
+        user.modules = Math.max(1, (user.modules || 0) + 1);
+
+        if (typeof AuthService !== 'undefined') {
+          AuthService.syncSession(user);
+        }
+
+        // Save attempt to global history list
+        try {
+          const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+          const attempt = {
+            skill: this.activeSkill,
+            score: correctCount,
+            level: level,
+            date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+          };
+          history.unshift(attempt);
+          localStorage.setItem('LearnSprint_quiz_history', JSON.stringify(history));
+        } catch(err) {
+          console.error("Local quiz history write failed", err);
+        }
+
+        this.renderQuizHistory();
+
+        if (quizCard) quizCard.style.display = 'none';
+        if (resultsCard) {
+          resultsCard.classList.remove('hidden');
+          resultsCard.style.display = 'block';
+        }
+
+        const scoreVal = document.getElementById('results-score-val');
+        const levelBadge = document.getElementById('results-level-badge');
+        const skillNameVal = document.getElementById('results-skill-name');
+
+        if (scoreVal) scoreVal.textContent = `${correctCount} / 10`;
+        if (skillNameVal) skillNameVal.textContent = this.activeSkill;
+        if (levelBadge) {
+          levelBadge.className = `level-badge-large badge ${badgeClass}`;
+          levelBadge.textContent = level;
+        }
+
+        // Load dynamic syllabus/study plan details
+        await this.fetchStudyPlanDetails();
+
+      } catch (submitErr) {
+        console.error("Failed to submit assessment to backend, falling back to local grading:", submitErr);
+        this.gradeQuizLocally();
+      }
+    } else {
+      this.gradeQuizLocally();
+    }
+  }
+
+  gradeQuizLocally() {
     let correctCount = 0;
     this.currentQuestions.forEach((q, idx) => {
       if (this.userAnswers[idx] === q.a) {
@@ -516,10 +694,6 @@ class LearnAIController {
       }
     });
 
-    // Score categorization:
-    // 0-4 correct = Beginner
-    // 5-7 correct = Intermediate
-    // 8-10 correct = Advanced
     let level = "Beginner";
     let badgeClass = "badge-danger";
     if (correctCount >= 8) {
@@ -530,13 +704,10 @@ class LearnAIController {
       badgeClass = "badge-warning";
     }
 
-    // Sync stats into Local Storage
     const user = this.sessionUser;
     user.skill = this.activeSkill;
     user.score = correctCount;
     user.level = level;
-    
-    // Simulate study increments upon successful assessment completion
     user.streak = Math.max(1, (user.streak || 0) + 1);
     user.hours = Math.max(2, (user.hours || 0) + 2);
     user.modules = Math.max(1, (user.modules || 0) + 1);
@@ -545,7 +716,6 @@ class LearnAIController {
       AuthService.syncSession(user);
     }
 
-    // Save attempt to global history list in Local Storage
     try {
       const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
       const attempt = {
@@ -554,16 +724,14 @@ class LearnAIController {
         level: level,
         date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
       };
-      history.unshift(attempt); // Add to the top of the history list
+      history.unshift(attempt);
       localStorage.setItem('LearnSprint_quiz_history', JSON.stringify(history));
     } catch(err) {
       console.error("Local quiz history write failed", err);
     }
 
-    // Refresh history cards list
     this.renderQuizHistory();
 
-    // Render results view
     const quizCard = document.getElementById('quiz-card');
     const resultsCard = document.getElementById('results-card');
 
@@ -573,7 +741,6 @@ class LearnAIController {
       resultsCard.style.display = 'block';
     }
 
-    // Populate Results Content
     const scoreVal = document.getElementById('results-score-val');
     const levelBadge = document.getElementById('results-level-badge');
     const skillNameVal = document.getElementById('results-skill-name');
@@ -583,6 +750,58 @@ class LearnAIController {
     if (levelBadge) {
       levelBadge.className = `level-badge-large badge ${badgeClass}`;
       levelBadge.textContent = level;
+    }
+  }
+
+  async fetchStudyPlanDetails() {
+    try {
+      if (typeof ApiService !== 'undefined' && AuthService.isAuthenticated()) {
+        const plan = await ApiService.getActiveStudyPlan();
+        if (plan) {
+          console.log("Successfully fetched study plan from database:", plan);
+          const roadmapPlaceholder = document.querySelector('.roadmap-placeholder');
+          if (roadmapPlaceholder) {
+            // Render structured plan dynamically
+            let stepsHtml = `
+              <div class="active-study-plan-box" style="margin-top: 16px; padding: 18px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--bg-secondary);">
+                <h4 style="margin-top: 0; color: var(--accent-blue); display: flex; align-items: center; gap: 8px; font-size: 1rem;">
+                  <i class="fas fa-route"></i> AI Study Roadmap: ${this.escapeHTML(this.activeSkill)}
+                </h4>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px;">
+                  Syllabus level matches your <strong>${this.sessionUser.level}</strong> assessment. Target: ${this.timeLimit || 60} Days (${this.dailyHours || 2} hrs/day).
+                </p>
+                <div class="roadmap-steps" style="display: flex; flex-direction: column; gap: 12px; max-height: 250px; overflow-y: auto; padding-right: 8px;">
+            `;
+
+            const steps = plan.steps || plan.roadmap || [];
+            if (steps.length > 0) {
+              steps.forEach((step, index) => {
+                stepsHtml += `
+                  <div class="roadmap-step-item" style="padding: 10px 14px; border-left: 3px solid var(--accent-blue); background-color: var(--bg-primary); border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;">
+                    <strong style="font-size: 0.85rem; color: var(--text-primary); display: block;">Step ${index + 1}: ${this.escapeHTML(step.title || step.name || `Module ${index + 1}`)}</strong>
+                    <p style="margin: 4px 0 0 0; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">${this.escapeHTML(step.description || step.content || "")}</p>
+                  </div>
+                `;
+              });
+            } else {
+              stepsHtml += `
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 12px;">
+                  Roadmap generated. Connect to database to view structured chapters.
+                </div>
+              `;
+            }
+
+            stepsHtml += `
+                </div>
+              </div>
+            `;
+            
+            roadmapPlaceholder.innerHTML = stepsHtml;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Could not fetch active study plan details from database:", err);
     }
   }
 

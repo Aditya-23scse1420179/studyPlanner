@@ -32,20 +32,24 @@ class DashboardController {
     const searchInput = document.getElementById('search-input');
     const tags = document.querySelectorAll('.tag-chip');
 
-    const handleSearch = (query) => {
+    const handleSearch = (query, autoGen = false) => {
       if (!query) return;
       // Redirect to Learn With AI page with search query parameter
-      window.location.href = `learn-ai.html?search=${encodeURIComponent(query)}`;
+      let url = `learn-ai.html?search=${encodeURIComponent(query)}`;
+      if (autoGen) {
+        url += `&auto=true`;
+      }
+      window.location.href = url;
     };
 
     if (searchFormBtn && searchInput) {
       searchFormBtn.addEventListener('click', () => {
-        handleSearch(searchInput.value.trim());
+        handleSearch(searchInput.value.trim(), false);
       });
 
       searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          handleSearch(searchInput.value.trim());
+          handleSearch(searchInput.value.trim(), false);
         }
       });
     }
@@ -54,7 +58,20 @@ class DashboardController {
     tags.forEach(tag => {
       tag.addEventListener('click', () => {
         const queryText = tag.getAttribute('data-skill') || tag.textContent.trim();
-        handleSearch(queryText);
+        handleSearch(queryText, true);
+      });
+    });
+
+    // Trending skills carousel cards click handler
+    const carouselCards = document.querySelectorAll('.carousel-card');
+    carouselCards.forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const skillTitleEl = card.querySelector('h3');
+        if (skillTitleEl) {
+          const queryText = skillTitleEl.textContent.trim();
+          handleSearch(queryText, true);
+        }
       });
     });
   }

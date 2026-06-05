@@ -127,9 +127,9 @@ body.dark-theme .auth-card.typing {
   animation-play-state: paused !important;
 }
 
-/* Play animation only on hover */
-.login-split-card:hover .auth-animation-pane,
-.login-split-card:hover .auth-animation-pane * {
+/* Play animation only on hover on the animation pane itself */
+.auth-animation-pane:hover,
+.auth-animation-pane:hover * {
   animation-play-state: running !important;
 }
 
