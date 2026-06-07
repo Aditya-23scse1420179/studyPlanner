@@ -122,19 +122,21 @@ class DashboardController {
     const scoreCircle = document.getElementById('score-circle-fill');
 
     if (scoreNum) {
-      // Simple animate number count-up
-      let currentVal = 0;
-      const duration = 800; // ms
-      const stepTime = Math.abs(Math.floor(duration / finalScore));
-      
       if (finalScore > 0) {
-        const timer = setInterval(() => {
-          currentVal++;
+        const startTimestamp = performance.now();
+        const duration = 800; // ms
+        const animate = (now) => {
+          const elapsed = now - startTimestamp;
+          const progress = Math.min(elapsed / duration, 1);
+          const currentVal = Math.floor(progress * finalScore);
           scoreNum.textContent = currentVal;
-          if (currentVal >= finalScore) {
-            clearInterval(timer);
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            scoreNum.textContent = finalScore;
           }
-        }, stepTime || 10);
+        };
+        requestAnimationFrame(animate);
       } else {
         scoreNum.textContent = '0';
       }

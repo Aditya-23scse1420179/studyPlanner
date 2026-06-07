@@ -649,10 +649,16 @@ class LearnAIController {
       qData.o.forEach((optionText, idx) => {
         const optionDiv = document.createElement('div');
         optionDiv.className = 'option-item';
-        optionDiv.innerHTML = `
-          <div class="option-marker">${markers[idx]}</div>
-          <span>${this.escapeHTML(optionText)}</span>
-        `;
+        
+        const markerDiv = document.createElement('div');
+        markerDiv.className = 'option-marker';
+        markerDiv.textContent = markers[idx];
+        
+        const spanText = document.createElement('span');
+        spanText.textContent = optionText;
+        
+        optionDiv.appendChild(markerDiv);
+        optionDiv.appendChild(spanText);
         
         // Click listener
         optionDiv.addEventListener('click', () => {
@@ -769,9 +775,10 @@ class LearnAIController {
           this.sessionUser = AuthService.getCurrentUser();
         }
 
-        // Save attempt to global history list
+        // Save attempt to user-specific history list
         try {
-          const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+          const historyKey = `LearnSprint_quiz_history_${this.sessionUser.email.toLowerCase()}`;
+          const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
           const attempt = {
             skill: this.activeSkill,
             score: correctCount,
@@ -779,7 +786,7 @@ class LearnAIController {
             date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
           };
           history.unshift(attempt);
-          localStorage.setItem('LearnSprint_quiz_history', JSON.stringify(history));
+          window.safeLocalStorageSet(historyKey, JSON.stringify(history));
         } catch(err) {
           console.error("Local quiz history write failed", err);
         }
@@ -849,7 +856,8 @@ class LearnAIController {
     }
 
     try {
-      const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+      const historyKey = `LearnSprint_quiz_history_${this.sessionUser.email.toLowerCase()}`;
+      const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
       const attempt = {
         skill: this.activeSkill,
         score: correctCount,
@@ -857,7 +865,7 @@ class LearnAIController {
         date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
       };
       history.unshift(attempt);
-      localStorage.setItem('LearnSprint_quiz_history', JSON.stringify(history));
+      window.safeLocalStorageSet(historyKey, JSON.stringify(history));
     } catch(err) {
       console.error("Local quiz history write failed", err);
     }
@@ -931,7 +939,7 @@ class LearnAIController {
               </div>
             `;
             
-            roadmapPlaceholder.innerHTML = stepsHtml;
+            roadmapPlaceholder.innerHTML = SecurityService.sanitizeHTML(stepsHtml);
           }
         }
       }
@@ -946,7 +954,8 @@ class LearnAIController {
 
     let history = [];
     try {
-      history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+      const historyKey = `LearnSprint_quiz_history_${this.sessionUser.email.toLowerCase()}`;
+      history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
     } catch(err) {
       console.error("Failed to read quiz history", err);
     }
@@ -991,7 +1000,7 @@ class LearnAIController {
       row.innerHTML = `
         <div style="flex-grow: 1; padding-right: 16px;">
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <strong style="color: var(--text-primary); font-size: 0.95rem;">${this.escapeHTML(attempt.skill)}</strong>
+            <strong class="row-skill-title" style="color: var(--text-primary); font-size: 0.95rem;"></strong>
             <span style="font-size: 0.72rem; color: var(--text-muted);">${attempt.date}</span>
           </div>
           <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">
@@ -1003,6 +1012,7 @@ class LearnAIController {
           <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">${attempt.score} / 10</span>
         </div>
       `;
+      row.querySelector('.row-skill-title').textContent = attempt.skill;
       listContainer.appendChild(row);
     });
   }
@@ -1077,13 +1087,15 @@ class LearnAIController {
           <span class="video-duration-badge">${item.duration}</span>
         </div>
         <div class="video-info-content">
-          <h4>${this.escapeHTML(item.title)}</h4>
-          <span class="video-channel">${this.escapeHTML(item.channel)}</span>
+          <h4 class="video-title"></h4>
+          <span class="video-channel-name"></span>
           <a href="${item.url}" target="_blank" class="btn btn-secondary watch-btn-action">
             <i class="fab fa-youtube"></i> Watch Now
           </a>
         </div>
       `;
+      card.querySelector('.video-title').textContent = item.title;
+      card.querySelector('.video-channel-name').textContent = item.channel;
       grid.appendChild(card);
     });
   }

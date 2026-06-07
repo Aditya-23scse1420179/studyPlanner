@@ -44,7 +44,7 @@ class RemindersController {
 
   loadReminders() {
     try {
-      this.remindersList = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+      this.remindersList = JSON.parse(window.safeLocalStorageGet(this.storageKey) || '[]');
     } catch (e) {
       console.error("Failed to parse reminders", e);
       this.remindersList = [];
@@ -52,7 +52,7 @@ class RemindersController {
   }
 
   saveReminders() {
-    localStorage.setItem(this.storageKey, JSON.stringify(this.remindersList));
+    window.safeLocalStorageSet(this.storageKey, JSON.stringify(this.remindersList));
     this.render();
   }
 
@@ -196,11 +196,6 @@ class RemindersController {
       card.style.marginBottom = '12px';
       card.style.borderLeft = reminder.completed ? '4px solid var(--color-success)' : '4px solid var(--accent-blue)';
       
-      // Escape HTML
-      const escapedTopic = reminder.topic.replace(/[&<>'"]/g, tag => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[tag] || tag));
-
       // Format date
       const dateObj = new Date(reminder.date);
       const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -220,8 +215,7 @@ class RemindersController {
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
           <div style="min-width: 0;">
-            <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; text-decoration: ${reminder.completed ? 'line-through' : 'none'}; color: ${reminder.completed ? 'var(--text-secondary)' : 'var(--text-primary)'};">
-              ${escapedTopic}
+            <h4 class="reminder-topic-text" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; text-decoration: ${reminder.completed ? 'line-through' : 'none'}; color: ${reminder.completed ? 'var(--text-secondary)' : 'var(--text-primary)'};">
             </h4>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-secondary);">
               <span><i class="far fa-calendar-alt"></i> ${formattedDate}</span>
@@ -246,7 +240,7 @@ class RemindersController {
         </div>
       `;
 
-      // Event bindings
+      card.querySelector('.reminder-topic-text').textContent = reminder.topic;
       card.querySelector('.complete-btn').onclick = () => this.toggleComplete(reminder.id);
       
       const editBtn = card.querySelector('.edit-btn');

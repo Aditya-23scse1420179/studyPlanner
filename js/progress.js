@@ -55,7 +55,8 @@ class ProgressController {
         scoreText = `${user.score} / 10`;
       } else {
         try {
-          const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+          const historyKey = `LearnSprint_quiz_history_${user.email.toLowerCase()}`;
+          const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
           if (history.length > 0) {
             scoreText = `${history[0].score} / 10`;
           }
@@ -107,7 +108,8 @@ class ProgressController {
       accuracyPct = user.score * 10;
     } else {
       try {
-        const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+        const historyKey = `LearnSprint_quiz_history_${user.email.toLowerCase()}`;
+        const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
         if (history.length > 0) {
           accuracyPct = history[0].score * 10;
         }
@@ -154,7 +156,8 @@ class ProgressController {
       scoreText = `${user.score} / 10`;
     } else {
       try {
-        const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+        const historyKey = `LearnSprint_quiz_history_${user.email.toLowerCase()}`;
+        const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
         if (history.length > 0) {
           accuracyPct = history[0].score * 10;
           scoreText = `${history[0].score} / 10`;

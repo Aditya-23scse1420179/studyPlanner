@@ -96,21 +96,19 @@ The platform first evaluates the student through an assessment and then categori
 ## Technology Stack
 
 ### Frontend
-
 * HTML5
-* CSS3
-* JavaScript
+* CSS3 (Vanilla CSS with custom properties & glassmorphism)
+* JavaScript (ES6+ Vanilla OOP)
 
-### Storage
+### Backend API
+* Node.js / Express API hosted on Render (`https://learnsprint-backend-1.onrender.com/api/v1`) for:
+  - User Registration, OTP verification, and Password Setting Onboarding.
+  - Secure Session Management (Access and Refresh JWT tokens).
+  - Dynamic AI Assessment Quiz Generation.
+  - Active study plan calculations.
 
-* Browser Local Storage
-
-### Future Integrations
-
-* AI Recommendation Engine
-* Meta HyperAgent Framework
-* Backend APIs
-* Database Support
+### Storage & Caching
+* Browser Local Storage (`LearnSprint_session`, `LearnSprint_quiz_history`, reminders checklist, and study hour statistics) for offline resilience and instant rendering.
 
 ---
 

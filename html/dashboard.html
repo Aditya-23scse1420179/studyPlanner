@@ -822,6 +822,7 @@
   </div>
 
   <!-- Script Imports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/dashboard.js"></script>
@@ -884,9 +885,9 @@
 
           const submission = { id: Date.now(), name, email, message, date: new Date().toISOString() };
           try {
-            const list = JSON.parse(localStorage.getItem('LearnSprint_feedback_submissions') || '[]');
+            const list = JSON.parse(window.safeLocalStorageGet('LearnSprint_feedback_submissions') || '[]');
             list.push(submission);
-            localStorage.setItem('LearnSprint_feedback_submissions', JSON.stringify(list));
+            window.safeLocalStorageSet('LearnSprint_feedback_submissions', JSON.stringify(list));
           } catch(err) {
             console.error("Local feedback write failed", err);
           }
@@ -916,9 +917,9 @@
 
           const data = { id: Date.now(), name, email, suggestion, date: new Date().toISOString() };
           try {
-            const list = JSON.parse(localStorage.getItem('LearnSprint_improvements') || '[]');
+            const list = JSON.parse(window.safeLocalStorageGet('LearnSprint_improvements') || '[]');
             list.push(data);
-            localStorage.setItem('LearnSprint_improvements', JSON.stringify(list));
+            window.safeLocalStorageSet('LearnSprint_improvements', JSON.stringify(list));
           } catch(err) {
             console.error("Local improvements write failed", err);
           }

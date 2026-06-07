@@ -118,6 +118,8 @@
   gap: 16px;
   width: max-content;
   animation: scrollMarquee 35s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .carousel-track:hover {
@@ -508,6 +510,8 @@
   gap: 16px;
   width: max-content;
   animation: scrollReviewMarquee 25s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .reviews-carousel-track:hover {

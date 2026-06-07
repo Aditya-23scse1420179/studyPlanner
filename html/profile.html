@@ -238,6 +238,7 @@
   </div>
 
   <!-- Script Modules -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/main.js"></script>
   <script>
@@ -271,7 +272,8 @@
           scoreText = `${user.score} / 10`;
         } else {
           try {
-            const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+            const historyKey = `LearnSprint_quiz_history_${user.email.toLowerCase()}`;
+            const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
             if (history.length > 0) {
               scoreText = `${history[0].score} / 10`;
             }
@@ -285,7 +287,8 @@
       let userLevel = user.level || 'Beginner';
       if (user.score === null || user.score === undefined) {
         try {
-          const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+          const historyKey = `LearnSprint_quiz_history_${user.email.toLowerCase()}`;
+          const history = JSON.parse(window.safeLocalStorageGet(historyKey) || '[]');
           if (history.length > 0) {
             userLevel = history[0].level || 'Beginner';
           }
