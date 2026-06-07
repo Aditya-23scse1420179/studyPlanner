@@ -44,7 +44,7 @@
           <form id="login-form">
             <div class="form-group">
               <label for="login-email">Email address</label>
-              <input type="email" id="login-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+              <input type="email" id="login-email" class="form-control" placeholder="" value="" required autocomplete="email">
             </div>
             
             <div class="form-group">
@@ -52,7 +52,17 @@
                 <label for="login-password">Password</label>
                 <a href="#" class="forgot-password-link" id="show-forgot-btn">Forgot password?</a>
               </div>
-              <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+              <div class="password-wrapper" style="position: relative;">
+                <div class="password-error-tooltip" id="login-password-error-tooltip">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span class="tooltip-text"></span>
+                  <button type="button" class="close-tooltip" onclick="this.parentElement.classList.remove('show')">&times;</button>
+                </div>
+                <input type="password" id="login-password" class="form-control" placeholder="" value="" required autocomplete="current-password" style="padding-right: 40px;">
+                <span class="toggle-password" id="toggle-login-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary); z-index: 10;">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
             </div>
 
             <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Sign In</button>
@@ -73,30 +83,63 @@
           <form id="signup-form">
             <div class="form-group">
               <label for="signup-name">Full name</label>
-              <input type="text" id="signup-name" class="form-control" placeholder="Aditya Pratap" required autocomplete="name">
+              <input type="text" id="signup-name" class="form-control" placeholder="" value="" required autocomplete="name">
             </div>
 
             <div class="form-group">
               <label for="signup-email">Email address</label>
-              <input type="email" id="signup-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
-            </div>
-            
-            <div class="form-group">
-              <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+              <input type="email" id="signup-email" class="form-control" placeholder="" value="" required autocomplete="email">
             </div>
 
-            <div class="form-group">
-              <label for="signup-confirm-password">Confirm Password</label>
-              <input type="password" id="signup-confirm-password" class="form-control" placeholder="••••••••" required autocomplete="new-password">
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-user-plus"></i> Create Account</button>
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-user-plus"></i> Send verification OTP</button>
           </form>
 
           <div class="auth-footer">
             Already have an account? <a href="#" id="show-login-btn">Sign in</a>.
           </div>
+        </div>
+
+        <!-- 2.2. SET PASSWORD CARD (POST-OTP ONBOARDING) -->
+        <div class="auth-card fade-in hidden" id="set-password-card">
+          <h2>Set Your Password</h2>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-bottom: 20px;">
+            Please choose a secure password to complete your registration and onboard.
+          </p>
+          
+          <div class="auth-alert auth-alert-error" id="set-password-error"></div>
+          <div class="auth-alert auth-alert-success" id="set-password-success"></div>
+
+          <form id="set-password-form">
+            <div class="form-group">
+              <label for="set-password-input">Password</label>
+              <div class="password-wrapper" style="position: relative;">
+                <div class="password-error-tooltip" id="set-password-error-tooltip">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span class="tooltip-text"></span>
+                  <button type="button" class="close-tooltip" onclick="this.parentElement.classList.remove('show')">&times;</button>
+                </div>
+                <input type="password" id="set-password-input" class="form-control" placeholder="" required autocomplete="new-password" style="padding-right: 40px;">
+                <span class="toggle-password" id="toggle-set-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary); z-index: 10;">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+              <div class="password-requirements" style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.4; background: rgba(255,255,255,0.05); padding: 8px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color);">
+                <p style="margin: 0; font-weight: 600;"><i class="fas fa-info-circle"></i> Password Requirement: Minimum length of 8 characters.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="set-password-confirm">Confirm Password</label>
+              <div class="password-wrapper" style="position: relative;">
+                <input type="password" id="set-password-confirm" class="form-control" placeholder="" required autocomplete="new-password" style="padding-right: 40px;">
+                <span class="toggle-password" id="toggle-set-confirm-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary); z-index: 10;">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check-double"></i> Complete Onboarding</button>
+          </form>
         </div>
 
         <!-- 2.5. OTP VERIFICATION CARD -->
@@ -138,19 +181,32 @@
             <!-- Phase 1: Enter Email -->
             <div class="form-group" id="forgot-email-group">
               <label for="forgot-email">Email address</label>
-              <input type="email" id="forgot-email" class="form-control" placeholder="name@email.com" required autocomplete="email">
+              <input type="email" id="forgot-email" class="form-control" placeholder="" value="" required autocomplete="email">
             </div>
 
             <!-- Phase 2: Enter OTP and New Password (hidden by default) -->
             <div id="forgot-otp-phase" style="display: none; flex-direction: column; gap: 16px; margin-bottom: 16px;">
               <div class="form-group">
                 <label for="forgot-otp">Verification Code (OTP)</label>
-                <input type="text" id="forgot-otp" class="form-control" placeholder="123456" maxlength="6" autocomplete="one-time-code">
+                <input type="text" id="forgot-otp" class="form-control" placeholder="" value="" maxlength="6" autocomplete="one-time-code">
               </div>
 
               <div class="form-group">
                 <label for="forgot-new-password">New Password</label>
-                <input type="password" id="forgot-new-password" class="form-control" placeholder="At least 6 characters" autocomplete="new-password">
+                <div class="password-wrapper" style="position: relative;">
+                  <div class="password-error-tooltip" id="forgot-password-error-tooltip">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span class="tooltip-text"></span>
+                    <button type="button" class="close-tooltip" onclick="this.parentElement.classList.remove('show')">&times;</button>
+                  </div>
+                  <input type="password" id="forgot-new-password" class="form-control" placeholder="" value="" autocomplete="new-password" style="padding-right: 40px;">
+                  <span class="toggle-password" id="toggle-forgot-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary); z-index: 10;">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                </div>
+                <div class="password-requirements" style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.4; background: rgba(255,255,255,0.05); padding: 8px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color);">
+                  <p style="margin: 0; font-weight: 600;"><i class="fas fa-info-circle"></i> Password Requirement: Minimum length of 7 characters.</p>
+                </div>
               </div>
             </div>
 
@@ -214,6 +270,51 @@
   <!-- Login Page Controller Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Password validation helper
+      function validatePasswordRequirements(password) {
+        return password.length >= 7;
+      }
+
+      // Password visibility toggles helper
+      function bindPasswordToggle(toggleId, inputId) {
+        const toggleEl = document.getElementById(toggleId);
+        const inputEl = document.getElementById(inputId);
+        if (toggleEl && inputEl) {
+          toggleEl.addEventListener('click', () => {
+            const icon = toggleEl.querySelector('i');
+            if (inputEl.type === 'password') {
+              inputEl.type = 'text';
+              if (icon) {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+              }
+            } else {
+              inputEl.type = 'password';
+              if (icon) {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+              }
+            }
+          });
+        }
+      }
+
+      // Password generator for compliant signup temporary password
+      function generateTempPassword() {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+        let pass = "TempP@ss1!";
+        for (let i = 0; i < 10; i++) {
+          pass += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return pass;
+      }
+
+      // Bind eye buttons
+      bindPasswordToggle('toggle-login-password', 'login-password');
+      bindPasswordToggle('toggle-set-password', 'set-password-input');
+      bindPasswordToggle('toggle-set-confirm-password', 'set-password-confirm');
+      bindPasswordToggle('toggle-forgot-password', 'forgot-new-password');
+
       // 1. If already logged in, redirect to dashboard immediately
       if (AuthService.isAuthenticated()) {
         window.location.href = 'dashboard.html';
@@ -223,6 +324,7 @@
       // 2. Element References
       const loginCard = document.getElementById('login-card');
       const signupCard = document.getElementById('signup-card');
+      const setPasswordCard = document.getElementById('set-password-card');
       const otpCard = document.getElementById('otp-card');
       const forgotCard = document.getElementById('forgot-card');
 
@@ -247,6 +349,7 @@
       // Forms
       const loginForm = document.getElementById('login-form');
       const signupForm = document.getElementById('signup-form');
+      const setPasswordForm = document.getElementById('set-password-form');
       const otpForm = document.getElementById('otp-form');
       const forgotForm = document.getElementById('forgot-form');
 
@@ -255,6 +358,8 @@
       const loginSuccess = document.getElementById('login-success');
       const signupError = document.getElementById('signup-error');
       const signupSuccess = document.getElementById('signup-success');
+      const setPasswordError = document.getElementById('set-password-error');
+      const setPasswordSuccess = document.getElementById('set-password-success');
       const otpError = document.getElementById('otp-error');
       const otpSuccess = document.getElementById('otp-success');
       const forgotError = document.getElementById('forgot-error');
@@ -265,14 +370,52 @@
 
       // Helper to clear alerts
       function clearAlerts() {
-        const alerts = [loginError, loginSuccess, signupError, signupSuccess, otpError, otpSuccess, forgotError, forgotSuccess];
+        const alerts = [loginError, loginSuccess, signupError, signupSuccess, setPasswordError, setPasswordSuccess, otpError, otpSuccess, forgotError, forgotSuccess];
         alerts.forEach(a => {
           if (a) {
             a.textContent = '';
             a.classList.remove('show');
           }
         });
+
+        // Hide floating password error tooltips
+        const tooltips = document.querySelectorAll('.password-error-tooltip');
+        tooltips.forEach(t => {
+          t.classList.remove('show');
+          const txt = t.querySelector('.tooltip-text');
+          if (txt) txt.textContent = '';
+        });
       }
+
+      // Helper to show floating password tooltips
+      function showPasswordTooltip(tooltipId, message) {
+        const tooltip = document.getElementById(tooltipId);
+        if (tooltip) {
+          const txt = tooltip.querySelector('.tooltip-text');
+          if (txt) {
+            txt.textContent = message;
+          }
+          tooltip.classList.add('show');
+          tooltip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
+      // Clear tooltips dynamically on typing
+      const passwordInputs = ['login-password', 'set-password-input', 'forgot-new-password'];
+      passwordInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.addEventListener('input', () => {
+            const wrapper = input.parentElement;
+            if (wrapper) {
+              const tooltip = wrapper.querySelector('.password-error-tooltip');
+              if (tooltip) {
+                tooltip.classList.remove('show');
+              }
+            }
+          });
+        }
+      });
 
       function resetForgotState() {
         forgotOtpSent = false;
@@ -358,8 +501,12 @@
             window.location.href = 'dashboard.html';
           }, 1000);
         } else {
-          loginError.textContent = res.message;
-          loginError.classList.add('show');
+          if (res.message.toLowerCase().includes('password') || res.message.toLowerCase().includes('credential')) {
+            showPasswordTooltip('login-password-error-tooltip', res.message);
+          } else {
+            loginError.textContent = res.message;
+            loginError.classList.add('show');
+          }
         }
       });
 
@@ -370,20 +517,9 @@
 
         const name = document.getElementById('signup-name').value.trim();
         const email = document.getElementById('signup-email').value.trim();
-        const password = document.getElementById('signup-password').value;
-        const confirm = document.getElementById('signup-confirm-password').value;
 
-        if (password.length < 6) {
-          signupError.textContent = "Password must be at least 6 characters.";
-          signupError.classList.add('show');
-          return;
-        }
-
-        if (password !== confirm) {
-          signupError.textContent = "Passwords do not match.";
-          signupError.classList.add('show');
-          return;
-        }
+        // Generate temporary password to initiate backend registration
+        const tempPassword = generateTempPassword();
 
         // Show spinner / loading state
         const submitBtn = signupForm.querySelector('button[type="submit"]');
@@ -391,7 +527,7 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
 
-        const res = await AuthService.signup(name, email, password);
+        const res = await AuthService.signup(name, email, tempPassword);
         submitBtn.disabled = false;
         submitBtn.innerHTML = origContent;
 
@@ -436,14 +572,65 @@
         submitBtn.innerHTML = origContent;
 
         if (res.success) {
-          otpSuccess.textContent = "Email successfully verified! Redirecting to dashboard...";
+          otpSuccess.textContent = "Email successfully verified! Proceeding to set password...";
           otpSuccess.classList.add('show');
           setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            otpCard.classList.add('hidden');
+            setPasswordCard.classList.remove('hidden');
+            clearAlerts();
           }, 1200);
         } else {
           otpError.textContent = res.message;
           otpError.classList.add('show');
+        }
+      });
+
+      // Set Password Form Submission (Post-OTP onboarding)
+      setPasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlerts();
+
+        const newPassword = document.getElementById('set-password-input').value;
+        const confirmPassword = document.getElementById('set-password-confirm').value;
+
+        // Custom validation checking the backend password complexity rules
+        const hasUpper = /[A-Z]/.test(newPassword);
+        const hasLower = /[a-z]/.test(newPassword);
+        const hasDigit = /[0-9]/.test(newPassword);
+        const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':\",\\.<>\/?]/.test(newPassword);
+
+        if (newPassword.length < 8 || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+          showPasswordTooltip('set-password-error-tooltip', "Password must be at least 8 characters and contain uppercase, lowercase, number, and special character.");
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          showPasswordTooltip('set-password-error-tooltip', "Passwords do not match.");
+          return;
+        }
+
+        const submitBtn = setPasswordForm.querySelector('button[type="submit"]');
+        const origContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving password...';
+
+        try {
+          if (typeof ApiService !== 'undefined') {
+            await ApiService.updateProfile({ password: newPassword });
+            
+            setPasswordSuccess.textContent = "Password registered successfully! Officially onboarding...";
+            setPasswordSuccess.classList.add('show');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 1200);
+          } else {
+            throw new Error("API service not initialized.");
+          }
+        } catch (error) {
+          showPasswordTooltip('set-password-error-tooltip', error.message || "Failed to update password. Try again.");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origContent;
         }
       });
 
@@ -514,9 +701,8 @@
           const otp = forgotOtpInput.value.trim();
           const newPassword = forgotNewPasswordInput.value;
 
-          if (newPassword.length < 6) {
-            forgotError.textContent = "New password must be at least 6 characters.";
-            forgotError.classList.add('show');
+          if (!validatePasswordRequirements(newPassword)) {
+            showPasswordTooltip('forgot-password-error-tooltip', "New password must be at least 7 characters.");
             return;
           }
 
@@ -548,8 +734,12 @@
           } else {
             forgotSubmitBtn.disabled = false;
             forgotSubmitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify & Update Password';
-            forgotError.textContent = verifyRes.message || "Invalid OTP code. Please try again.";
-            forgotError.classList.add('show');
+            if (verifyRes.message.toLowerCase().includes('password')) {
+              showPasswordTooltip('forgot-password-error-tooltip', verifyRes.message);
+            } else {
+              forgotError.textContent = verifyRes.message || "Invalid OTP code. Please try again.";
+              forgotError.classList.add('show');
+            }
           }
         }
       });

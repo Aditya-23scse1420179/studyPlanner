@@ -266,13 +266,39 @@
       
       if (statStreak) statStreak.textContent = `${user.streak || 0} Days`;
       if (statScore) {
-        statScore.textContent = user.score !== null && user.score !== undefined ? `${user.score} / 10` : 'N/A';
+        let scoreText = 'N/A';
+        if (user.score !== null && user.score !== undefined) {
+          scoreText = `${user.score} / 10`;
+        } else {
+          try {
+            const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+            if (history.length > 0) {
+              scoreText = `${history[0].score} / 10`;
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        statScore.textContent = scoreText;
       }
+
+      let userLevel = user.level || 'Beginner';
+      if (user.score === null || user.score === undefined) {
+        try {
+          const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+          if (history.length > 0) {
+            userLevel = history[0].level || 'Beginner';
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
       if (statLevel) {
-        statLevel.textContent = user.level || 'Beginner';
-        if (user.level === 'Advanced') {
+        statLevel.textContent = userLevel;
+        if (userLevel === 'Advanced') {
           statLevel.style.color = 'var(--color-success)';
-        } else if (user.level === 'Intermediate') {
+        } else if (userLevel === 'Intermediate') {
           statLevel.style.color = 'var(--color-warning)';
         } else {
           statLevel.style.color = 'var(--color-danger)';

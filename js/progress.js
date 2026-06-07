@@ -44,10 +44,26 @@ class ProgressController {
     // Populate standard values
     if (streakVal) streakVal.textContent = `${user.streak || 0} Days`;
     if (modulesVal) modulesVal.textContent = `${user.modules || 0} Modules`;
-    if (hoursVal) hoursVal.textContent = `${user.hours || 0} Hours`;
+    
+    const displayHours = typeof user.hours === 'number' ? user.hours.toFixed(2) : (parseFloat(user.hours) || 0).toFixed(2);
+    if (hoursVal) hoursVal.textContent = `${displayHours} Hours`;
     if (skillVal) skillVal.textContent = user.skill || 'None selected';
+    
     if (scoreVal) {
-      scoreVal.textContent = user.score !== null && user.score !== undefined ? `${user.score} / 10` : 'N/A';
+      let scoreText = 'N/A';
+      if (user.score !== null && user.score !== undefined) {
+        scoreText = `${user.score} / 10`;
+      } else {
+        try {
+          const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+          if (history.length > 0) {
+            scoreText = `${history[0].score} / 10`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      scoreVal.textContent = scoreText;
     }
 
     // Update standard progress bars (with simulated limits)
@@ -69,7 +85,7 @@ class ProgressController {
 
     if (hoursBar) {
       // Goal of 100 hours
-      const pct = Math.min(100, Math.round(((user.hours || 0) / 100) * 100));
+      const pct = Math.min(100, Math.round(((parseFloat(user.hours) || 0) / 100) * 100));
       setTimeout(() => {
         hoursBar.style.width = `${pct}%`;
       }, 100);
@@ -89,8 +105,15 @@ class ProgressController {
     let accuracyPct = 0;
     if (user.score !== null && user.score !== undefined) {
       accuracyPct = user.score * 10;
-    } else if (user.streak > 0) {
-      accuracyPct = 60; // Initial default placeholder if they studied but didn't evaluate
+    } else {
+      try {
+        const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+        if (history.length > 0) {
+          accuracyPct = history[0].score * 10;
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     if (accuracyText) accuracyText.textContent = `${accuracyPct}%`;
@@ -124,11 +147,24 @@ class ProgressController {
     if (!user) return;
 
     let accuracyPct = 0;
+    let scoreText = 'N/A';
+    
     if (user.score !== null && user.score !== undefined) {
       accuracyPct = user.score * 10;
-    } else if (user.streak > 0) {
-      accuracyPct = 60;
+      scoreText = `${user.score} / 10`;
+    } else {
+      try {
+        const history = JSON.parse(localStorage.getItem('LearnSprint_quiz_history') || '[]');
+        if (history.length > 0) {
+          accuracyPct = history[0].score * 10;
+          scoreText = `${history[0].score} / 10`;
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
+
+    const displayHours = typeof user.hours === 'number' ? user.hours.toFixed(2) : (parseFloat(user.hours) || 0).toFixed(2);
     const completionPct = Math.min(100, (user.modules || 0) * 8 || 0);
 
     const reportContent = `==================================================
@@ -143,11 +179,11 @@ Account Joined: ${user.joined || 'N/A'}
 ACADEMIC ANALYTICS & METRICS
 --------------------------------------------------
 Current Learning Skill : ${user.skill || 'None selected'}
-Assessment Score       : ${user.score !== null && user.score !== undefined ? `${user.score} / 10` : 'N/A'}
+Assessment Score       : ${scoreText}
 Evaluation Level       : ${user.level || 'Beginner'}
 
 Study Streak           : ${user.streak || 0} Days
-Total Study Hours      : ${user.hours || 0} Hours
+Total Study Hours      : ${displayHours} Hours
 Syllabus Modules Done  : ${user.modules || 0} Modules
 
 Quiz Performance       : ${accuracyPct}% Average Accuracy
@@ -157,7 +193,7 @@ Course Syllabus Done   : ${completionPct}% Syllabus Completed
 GOALS & CONSISTENCY PROGRESS
 --------------------------------------------------
 Daily Streak Goal (30 Days)   : [${'#'.repeat(Math.round(Math.min(100, ((user.streak || 0)/30)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.streak || 0)/30)*100)/5))}] ${Math.min(100, Math.round(((user.streak || 0)/30)*100))}%
-Study Hours Goal (100 Hours)   : [${'#'.repeat(Math.round(Math.min(100, ((user.hours || 0)/100)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.hours || 0)/100)*100)/5))}] ${Math.min(100, Math.round(((user.hours || 0)/100)*100))}%
+Study Hours Goal (100 Hours)   : [${'#'.repeat(Math.round(Math.min(100, ((parseFloat(user.hours) || 0)/100)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((parseFloat(user.hours) || 0)/100)*100)/5))}] ${Math.min(100, Math.round(((parseFloat(user.hours) || 0)/100)*100))}%
 Syllabus Modules Goal (12 Modules): [${'#'.repeat(Math.round(Math.min(100, ((user.modules || 0)/12)*100)/5))}${' '.repeat(20 - Math.round(Math.min(100, ((user.modules || 0)/12)*100)/5))}] ${Math.min(100, Math.round(((user.modules || 0)/12)*100))}%
 
 Keep studying and tracking your goals with LearnSprint AI!

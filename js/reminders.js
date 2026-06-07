@@ -112,14 +112,16 @@ class RemindersController {
     if (index !== -1) {
       this.remindersList[index].completed = !this.remindersList[index].completed;
       
-      // Sync simulated modular updates to dashboard stats if completing
-      if (this.remindersList[index].completed) {
-        const user = this.sessionUser;
-        user.modules = (user.modules || 0) + 1;
-        user.hours = (user.hours || 0) + 2;
+      // Sync simulated modular updates to dashboard stats
+      const user = this.sessionUser;
+      if (user) {
+        if (this.remindersList[index].completed) {
+          user.modules = (user.modules || 0) + 1;
+        } else {
+          user.modules = Math.max(0, (user.modules || 0) - 1);
+        }
         if (typeof AuthService !== 'undefined') {
           AuthService.syncSession(user);
-          // Sync header streak
           if (typeof populateUserSessionData === 'function') {
             populateUserSessionData();
           }

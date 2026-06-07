@@ -86,7 +86,9 @@ class DashboardController {
 
     if (streakVal) streakVal.textContent = user.streak || 0;
     if (modulesVal) modulesVal.textContent = user.modules || 0;
-    if (hoursVal) hoursVal.textContent = user.hours || 0;
+    
+    const displayHours = typeof user.hours === 'number' ? user.hours.toFixed(2) : (parseFloat(user.hours) || 0).toFixed(2);
+    if (hoursVal) hoursVal.textContent = displayHours;
     if (skillVal) {
       // Truncate long skill names if necessary
       const skillName = user.skill || 'None selected';

@@ -92,6 +92,34 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // 7. Active Page Time Tracker
+  let activeSeconds = 0;
+  setInterval(() => {
+    if (document.visibilityState === 'visible' && typeof AuthService !== 'undefined' && AuthService.isAuthenticated()) {
+      activeSeconds += 10;
+      if (activeSeconds >= 60) {
+        activeSeconds = 0;
+        const user = AuthService.getCurrentUser();
+        if (user) {
+          const minutes = 1;
+          const hoursToAdd = minutes / 60;
+          user.hours = parseFloat(((user.hours || 0) + hoursToAdd).toFixed(4));
+          AuthService.syncSession(user);
+
+          // Update visible study hours elements
+          const statHoursVal = document.getElementById('stat-hours-val');
+          if (statHoursVal) statHoursVal.textContent = user.hours.toFixed(2);
+
+          const progHours = document.getElementById('prog-hours');
+          if (progHours) progHours.textContent = `${user.hours.toFixed(2)} Hours`;
+
+          const profileHours = document.getElementById('profile-hours');
+          if (profileHours) profileHours.textContent = user.hours.toFixed(2);
+        }
+      }
+    }
+  }, 10000);
 });
 
 /**

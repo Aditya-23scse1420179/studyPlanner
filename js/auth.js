@@ -42,7 +42,12 @@ const AuthService = {
 
       const resData = await response.json();
       if (!response.ok) {
-        return { success: false, message: resData.message || 'Login failed.' };
+        let errMsg = resData.message || 'Login failed.';
+        if (resData.errors && Array.isArray(resData.errors)) {
+          const details = resData.errors.map(err => err.message).join(', ');
+          errMsg = `${errMsg}: ${details}`;
+        }
+        return { success: false, message: errMsg };
       }
 
       // Backend returns tokens at top-level or data-level
@@ -57,9 +62,9 @@ const AuthService = {
           skill: localStorage.getItem('LearnSprint_cached_skill') || 'None selected',
           level: localStorage.getItem('LearnSprint_cached_level') || 'Beginner',
           score: null,
-          streak: parseInt(localStorage.getItem('LearnSprint_cached_streak')) || 1,
-          hours: parseInt(localStorage.getItem('LearnSprint_cached_hours')) || 2,
-          modules: parseInt(localStorage.getItem('LearnSprint_cached_modules')) || 1
+          streak: parseInt(localStorage.getItem('LearnSprint_cached_streak')) || 0,
+          hours: parseFloat(localStorage.getItem('LearnSprint_cached_hours')) || 0,
+          modules: parseInt(localStorage.getItem('LearnSprint_cached_modules')) || 0
         }
       };
 
@@ -82,7 +87,12 @@ const AuthService = {
 
       const resData = await response.json();
       if (!response.ok) {
-        return { success: false, message: resData.message || 'Signup failed.' };
+        let errMsg = resData.message || 'Signup failed.';
+        if (resData.errors && Array.isArray(resData.errors)) {
+          const details = resData.errors.map(err => err.message).join(', ');
+          errMsg = `${errMsg}: ${details}`;
+        }
+        return { success: false, message: errMsg };
       }
 
       return { success: true, message: 'OTP sent to your email.' };
@@ -117,9 +127,9 @@ const AuthService = {
           skill: 'None selected',
           level: 'Beginner',
           score: null,
-          streak: 1,
-          hours: 2,
-          modules: 1
+          streak: 0,
+          hours: 0,
+          modules: 0
         }
       };
 
@@ -198,10 +208,60 @@ const AuthService = {
     });
   },
 
+  checkStreakValidity() {
+    const session = this.getCurrentSession();
+    if (!session || !session.user) return;
+
+    const todayStr = new Date().toLocaleDateString('en-CA');
+    const lastActiveStr = localStorage.getItem('LearnSprint_last_active_date');
+
+    if (lastActiveStr) {
+      const today = new Date(todayStr);
+      const lastActive = new Date(lastActiveStr);
+      const diffTime = today - lastActive;
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays > 1) {
+        // Broke streak! Reset to 0
+        session.user.streak = 0;
+        this.syncSession(session.user);
+      }
+    }
+  },
+
+  updateStreakOnActivity() {
+    const session = this.getCurrentSession();
+    if (!session || !session.user) return;
+
+    const todayStr = new Date().toLocaleDateString('en-CA');
+    const lastActiveStr = localStorage.getItem('LearnSprint_last_active_date');
+
+    if (!lastActiveStr) {
+      session.user.streak = 1;
+      localStorage.setItem('LearnSprint_last_active_date', todayStr);
+      this.syncSession(session.user);
+    } else if (lastActiveStr !== todayStr) {
+      const today = new Date(todayStr);
+      const lastActive = new Date(lastActiveStr);
+      const diffTime = today - lastActive;
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        session.user.streak = (session.user.streak || 0) + 1;
+      } else if (diffDays > 1) {
+        session.user.streak = 1;
+      }
+      localStorage.setItem('LearnSprint_last_active_date', todayStr);
+      this.syncSession(session.user);
+    }
+  },
+
   // Page guard
   guardPage() {
     if (!this.isAuthenticated()) {
       window.location.href = 'login.html';
+    } else {
+      this.checkStreakValidity();
     }
   }
 };

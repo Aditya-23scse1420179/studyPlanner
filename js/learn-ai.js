@@ -3,6 +3,129 @@
  * grading levels, and syncing performance stats with Local Storage.
  */
 
+const RECOMMENDATIONS_DB = {
+  "dsa": [
+    {
+      title: "Striver's A2Z DSA Master Course",
+      channel: "take U forward",
+      url: "https://www.youtube.com/@takeUforward",
+      duration: "12:30:00"
+    },
+    {
+      title: "Supreme DSA Placement Bootcamp",
+      channel: "CodeHelp - by Babbar",
+      url: "https://www.youtube.com/@CodeHelp",
+      duration: "08:45:00"
+    },
+    {
+      title: "Complete DSA Coding Bootcamp",
+      channel: "Apna College",
+      url: "https://www.youtube.com/@ApnaCollegeOfficial",
+      duration: "06:20:00"
+    }
+  ],
+  "html": [
+    {
+      title: "HTML Full Course for Beginners",
+      channel: "SuperSimpleDev",
+      url: "https://www.youtube.com/@SuperSimpleDev",
+      duration: "06:15:00"
+    },
+    {
+      title: "HTML5 Crash Course for Designers",
+      channel: "Traversy Media",
+      url: "https://www.youtube.com/@traversymedia",
+      duration: "02:30:00"
+    },
+    {
+      title: "HTML & CSS Tutorial for Beginners",
+      channel: "freeCodeCamp",
+      url: "https://www.youtube.com/@freecodecamp",
+      duration: "11:30:00"
+    }
+  ],
+  "css": [
+    {
+      title: "CSS variables & layout masterclass",
+      channel: "Kevin Powell",
+      url: "https://www.youtube.com/@KevinPowell",
+      duration: "04:15:00"
+    },
+    {
+      title: "CSS Grid & Flexbox Crash Course",
+      channel: "DesignCourse",
+      url: "https://www.youtube.com/@DesignCourse",
+      duration: "03:10:00"
+    },
+    {
+      title: "Full CSS Course - Beginner to Pro",
+      channel: "freeCodeCamp",
+      url: "https://www.youtube.com/@freecodecamp",
+      duration: "08:45:00"
+    }
+  ],
+  "javascript": [
+    {
+      title: "Modern JavaScript Master Course",
+      channel: "Traversy Media",
+      url: "https://www.youtube.com/@traversymedia",
+      duration: "04:30:00"
+    },
+    {
+      title: "JavaScript Tutorial for Beginners",
+      channel: "Programming with Mosh",
+      url: "https://www.youtube.com/@programmingwithmosh",
+      duration: "03:40:00"
+    },
+    {
+      title: "Namaste JavaScript Season 1",
+      channel: "Akshay Saini",
+      url: "https://www.youtube.com/@akshaymarch7",
+      duration: "10:15:00"
+    }
+  ],
+  "sql": [
+    {
+      title: "SQL Tutorial for Beginners",
+      channel: "Programming with Mosh",
+      url: "https://www.youtube.com/@programmingwithmosh",
+      duration: "03:00:00"
+    },
+    {
+      title: "Complete SQL & Database Bootcamp",
+      channel: "freeCodeCamp",
+      url: "https://www.youtube.com/@freecodecamp",
+      duration: "08:20:00"
+    },
+    {
+      title: "MySQL Database Administration Course",
+      channel: "Amigoscode",
+      url: "https://www.youtube.com/@amigoscode",
+      duration: "04:10:00"
+    }
+  ],
+  "machine learning": [
+    {
+      title: "Machine Learning Zoomcamp",
+      channel: "Alexey Grigorev",
+      url: "https://datatalks.club",
+      duration: "15:00:00"
+    },
+    {
+      title: "Deep Learning Specialization",
+      channel: "DeepLearning.AI",
+      url: "https://www.youtube.com/@Deeplearningai",
+      duration: "20:00:00"
+    },
+    {
+      title: "Practical Deep Learning for Coders",
+      channel: "fast.ai",
+      url: "https://www.youtube.com/@fastai",
+      duration: "18:30:00"
+    }
+  ]
+};
+
 // Question Database (10 questions per skill)
 const QUESTION_BANK = {
   "dsa": [
@@ -362,12 +485,18 @@ class LearnAIController {
     const autoGen = params.get('auto') === 'true';
     const skillInput = document.getElementById('skill-input');
     
-    if (searchSkill && skillInput) {
-      skillInput.value = searchSkill;
-      if (autoGen) {
-        setTimeout(() => {
-          this.handleGenerateClick();
-        }, 150);
+    if (skillInput) {
+      if (searchSkill) {
+        skillInput.value = searchSkill;
+        if (autoGen) {
+          setTimeout(() => {
+            this.handleGenerateClick();
+          }, 150);
+        }
+      } else if (this.sessionUser && this.sessionUser.skill && this.sessionUser.skill !== 'None selected') {
+        skillInput.value = this.sessionUser.skill;
+      } else {
+        skillInput.value = '';
       }
     }
   }
@@ -632,12 +761,12 @@ class LearnAIController {
         user.skill = this.activeSkill;
         user.score = correctCount;
         user.level = level;
-        user.streak = Math.max(1, (user.streak || 0) + 1);
-        user.hours = Math.max(2, (user.hours || 0) + 2);
         user.modules = Math.max(1, (user.modules || 0) + 1);
 
         if (typeof AuthService !== 'undefined') {
           AuthService.syncSession(user);
+          AuthService.updateStreakOnActivity();
+          this.sessionUser = AuthService.getCurrentUser();
         }
 
         // Save attempt to global history list
@@ -674,6 +803,9 @@ class LearnAIController {
           levelBadge.textContent = level;
         }
 
+        // Render dynamic video recommendations
+        this.renderRecommendations(this.activeSkill);
+
         // Load dynamic syllabus/study plan details
         await this.fetchStudyPlanDetails();
 
@@ -708,12 +840,12 @@ class LearnAIController {
     user.skill = this.activeSkill;
     user.score = correctCount;
     user.level = level;
-    user.streak = Math.max(1, (user.streak || 0) + 1);
-    user.hours = Math.max(2, (user.hours || 0) + 2);
     user.modules = Math.max(1, (user.modules || 0) + 1);
 
     if (typeof AuthService !== 'undefined') {
       AuthService.syncSession(user);
+      AuthService.updateStreakOnActivity();
+      this.sessionUser = AuthService.getCurrentUser();
     }
 
     try {
@@ -751,6 +883,9 @@ class LearnAIController {
       levelBadge.className = `level-badge-large badge ${badgeClass}`;
       levelBadge.textContent = level;
     }
+
+    // Render dynamic video recommendations
+    this.renderRecommendations(this.activeSkill);
   }
 
   async fetchStudyPlanDetails() {
@@ -882,6 +1017,75 @@ class LearnAIController {
         '"': '&quot;'
       }[tag] || tag)
     );
+  }
+
+  getRecommendationsForSkill(skill) {
+    const normalizedKey = skill.toLowerCase().trim();
+    if (RECOMMENDATIONS_DB[normalizedKey]) {
+      return RECOMMENDATIONS_DB[normalizedKey];
+    }
+    
+    if (normalizedKey.includes("dsa") || normalizedKey.includes("data structure") || normalizedKey.includes("algorithm")) {
+      return RECOMMENDATIONS_DB["dsa"];
+    } else if (normalizedKey.includes("html")) {
+      return RECOMMENDATIONS_DB["html"];
+    } else if (normalizedKey.includes("css")) {
+      return RECOMMENDATIONS_DB["css"];
+    } else if (normalizedKey.includes("js") || normalizedKey.includes("javascript") || normalizedKey.includes("react")) {
+      return RECOMMENDATIONS_DB["javascript"];
+    } else if (normalizedKey.includes("sql") || normalizedKey.includes("database") || normalizedKey.includes("db")) {
+      return RECOMMENDATIONS_DB["sql"];
+    } else if (normalizedKey.includes("machine learning") || normalizedKey.includes("ml") || normalizedKey.includes("ai") || normalizedKey.includes("deep learning")) {
+      return RECOMMENDATIONS_DB["machine learning"];
+    }
+
+    return [
+      {
+        title: `Complete ${skill} Masterclass for Beginners`,
+        channel: "freeCodeCamp",
+        url: "https://www.youtube.com/@freecodecamp",
+        duration: "08:15:00"
+      },
+      {
+        title: `${skill} Crash Course in 2 Hours`,
+        channel: "Traversy Media",
+        url: "https://www.youtube.com/@traversymedia",
+        duration: "02:00:00"
+      },
+      {
+        title: `${skill} Full Tutorial Series`,
+        channel: "Programming with Mosh",
+        url: "https://www.youtube.com/@programmingwithmosh",
+        duration: "05:30:00"
+      }
+    ];
+  }
+
+  renderRecommendations(skill) {
+    const grid = document.getElementById('recommendations-grid');
+    if (!grid) return;
+
+    const items = this.getRecommendationsForSkill(skill);
+    grid.innerHTML = '';
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'youtube-card';
+      card.innerHTML = `
+        <div class="video-thumbnail-box">
+          <i class="fab fa-youtube"></i>
+          <span class="video-duration-badge">${item.duration}</span>
+        </div>
+        <div class="video-info-content">
+          <h4>${this.escapeHTML(item.title)}</h4>
+          <span class="video-channel">${this.escapeHTML(item.channel)}</span>
+          <a href="${item.url}" target="_blank" class="btn btn-secondary watch-btn-action">
+            <i class="fab fa-youtube"></i> Watch Now
+          </a>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
   }
 }
 
