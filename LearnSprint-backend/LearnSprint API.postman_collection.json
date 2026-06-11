@@ -1,0 +1,618 @@
+{
+  "info": {
+    "_postman_id": "de135ba3-bded-49f1-bff8-f1dc8c5bee11",
+    "name": "LearnSprint API",
+    "description": "Complete API collection for LearnSprint backend. \n\nFlow:\n1. Signup → Verify OTP → Login (auto-saves token)\n2. Quiz Generate → copy quizId → Submit Assessment\n\nBase URL: http://localhost:5000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48641143",
+    "_collection_link": "https://go.postman.co/collection/48641143-de135ba3-bded-49f1-bff8-f1dc8c5bee11?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "LearnSprint",
+      "item": [
+        {
+          "name": "01 · Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                ""
+              ]
+            },
+            "description": "Check if the server is running."
+          },
+          "response": []
+        },
+        {
+          "name": "02 · Signup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Signup successful', () => pm.response.to.have.status(201));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Test@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            },
+            "description": "Register a new user. Sends OTP to email."
+          },
+          "response": []
+        },
+        {
+          "name": "03 · Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
+                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);",
+                  "pm.test('OTP verified', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify-otp"
+              ]
+            },
+            "description": "Verify email with OTP received in inbox. Auto-saves tokens to collection variables."
+          },
+          "response": []
+        },
+        {
+          "name": "04 · Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/resend-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "resend-otp"
+              ]
+            },
+            "description": "Resend OTP to email if expired."
+          },
+          "response": []
+        },
+        {
+          "name": "05 · Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
+                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);",
+                  "pm.test('Login successful', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Test@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login and auto-save accessToken + refreshToken to collection variables."
+          },
+          "response": []
+        },
+        {
+          "name": "06 · Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get the currently logged-in user's basic info."
+          },
+          "response": []
+        },
+        {
+          "name": "07 · Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
+                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Get a new accessToken using the refreshToken."
+          },
+          "response": []
+        },
+        {
+          "name": "08 · Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logout and invalidate refresh token."
+          },
+          "response": []
+        },
+        {
+          "name": "09 · Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Get the logged-in user's profile."
+          },
+          "response": []
+        },
+        {
+          "name": "10 · Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Updated\",\n  \"timezone\": \"Asia/Kolkata\",\n  \"themePref\": \"dark\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Update profile fields (all optional). themePref: light | dark | system."
+          },
+          "response": []
+        },
+        {
+          "name": "11 · Generate Quiz ⭐",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.quizId) pm.collectionVariables.set('quizId', res.quizId);",
+                  "pm.test('Quiz generated', () => pm.response.to.have.status(200));",
+                  "pm.test('Has 10 questions', () => pm.expect(res.questions.length).to.eql(10));",
+                  "console.log('quizId saved:', res.quizId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"JavaScript Promises and Async/Await\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/quiz/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quiz",
+                "generate"
+              ]
+            },
+            "description": "Generate 10 MCQ questions (3 easy, 3 medium, 4 hard) on any topic using Gemini AI.\n\nAuto-saves quizId to collection variable for use in Submit Assessment.\n\nquestionIds are auto-generated as q1–q10."
+          },
+          "response": []
+        },
+        {
+          "name": "12 · Quiz History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/quiz/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quiz",
+                "history"
+              ]
+            },
+            "description": "Get the list of quizzes this user has generated."
+          },
+          "response": []
+        },
+        {
+          "name": "13 · Submit Assessment ⭐",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quizId\": \"{{quizId}}\",\n  \"answers\": [\n    { \"questionId\": \"q1\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q2\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q3\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q4\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q5\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q6\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q7\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q8\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q9\",  \"selectedAnswer\": \"Paste exact option text here\" },\n    { \"questionId\": \"q10\", \"selectedAnswer\": \"Paste exact option text here\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/assessments/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "submit"
+              ]
+            },
+            "description": "Submit answers for a quiz generated by /quiz/generate.\n\n⚠️ IMPORTANT:\n1. First run '11 · Generate Quiz' — quizId is auto-saved\n2. Copy the exact option text from the generate response\n3. selectedAnswer must match EXACTLY (case-sensitive)\n\nReturns: score out of 10, percentage, classification, and breakdown with correct answers + explanations."
+          },
+          "response": []
+        },
+        {
+          "name": "14 · Get Active Study Plan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/study-plans/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "study-plans",
+                "active"
+              ]
+            },
+            "description": "Get the user's currently active study plan."
+          },
+          "response": []
+        },
+        {
+          "name": "15 · Create Reminder",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.reminderId) pm.collectionVariables.set('reminderId', res.reminderId);",
+                  "pm.test('Reminder created', () => pm.response.to.have.status(201));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Study JavaScript for 1 hour\",\n  \"scheduledAt\": \"2026-06-10T18:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reminders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reminders"
+              ]
+            },
+            "description": "Create a study reminder. scheduledAt must be a valid ISO date string."
+          },
+          "response": []
+        },
+        {
+          "name": "16 · Get Reminders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reminders?status=pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reminders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Filter: pending | completed | snoozed (optional)"
+                }
+              ]
+            },
+            "description": "Get all reminders. Filter by status: pending | completed | snoozed."
+          },
+          "response": []
+        },
+        {
+          "name": "17 · Complete Reminder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reminders/{{reminderId}}/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reminders",
+                "{{reminderId}}",
+                "complete"
+              ]
+            },
+            "description": "Mark a reminder as completed. Uses reminderId auto-saved from Create Reminder."
+          },
+          "response": []
+        },
+        {
+          "name": "18 · Submit Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Great app! Would love a dark mode toggle on the dashboard.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/feedback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "feedback"
+              ]
+            },
+            "description": "Submit user feedback. Max 2000 characters."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "quizId",
+      "value": ""
+    },
+    {
+      "key": "reminderId",
+      "value": ""
+    }
+  ]
+}
